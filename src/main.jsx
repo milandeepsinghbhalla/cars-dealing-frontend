@@ -14,6 +14,7 @@ import '@fontsource/roboto/700.css';
 import './index.css'
 import Navbar from './components/Navbar.jsx';
 import HomePage from './pageComponents/HomePage.jsx';
+import DashboardAdmin from './pageComponents/DashboardAdmin.jsx';
 
 const router = createBrowserRouter([
   {
@@ -22,9 +23,14 @@ const router = createBrowserRouter([
     children:[ {
       path: "/",
       element: <HomePage />
+    },
+    {
+      path: '/dashboard',
+      element: <DashboardAdmin />
     }
   ]
   },
+ 
 ])
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
