@@ -17,17 +17,17 @@
 
 // };
 
-function Car (id,name,type,year,price,brand){
+function Car (id,name,carType,year,price,brand){
 
     let car = {
         id,
         name,
-        type,
+        carType,
         year,
         price,
         brand,
         images: [],
-        specifications: {
+        specification: {
             engine: '',
             suspension: '',
             transmission: '',
