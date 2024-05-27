@@ -11,6 +11,8 @@ import CustomButton from "./CustomButton";
 import { useState } from "react";
 // import { Button, TextField, IconButton } from '@mui/material';
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
+// import { imageDb } from "../firebase";
+// import { ref } from "firebase/storage";
 
 const CssTextField = styled(TextField)({
   "& label.Mui-focused": {

@@ -51,7 +51,7 @@ export default function DashboardDrawer() {
         </IconButton>
       </div>
       <List>
-        {["Add Car", "Edit Car", "Add User", "Edit User"].map((text, index) => (
+        {["Add Car", "Manage Cars", "Add User", "Manage Users"].map((text, index) => (
           <ListItem key={text} disablePadding>
             <ListItemButton>
               <ListItemIcon>

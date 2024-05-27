@@ -12,9 +12,13 @@ import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 
 import './index.css'
+// import { getDatabase, ref, set } from "firebase/database";
+// import app from './firebase.js';
 import Navbar from './components/Navbar.jsx';
 import HomePage from './pageComponents/HomePage.jsx';
 import DashboardAdmin from './pageComponents/DashboardAdmin.jsx';
+
+// const db = getDatabase(app);
 
 const router = createBrowserRouter([
   {

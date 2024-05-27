@@ -76,12 +76,14 @@ const MobileNavbarDrawer = (props) => {
       <List>
         {navLinks.map((navItem, index) => (
           <ListItem key={index} disablePadding>
-            <Link to={navItem.link}>
+            <Link color={myColors.textBlack} to={navItem.link}>
               <ListItemButton>
                 {/* <ListItemIcon>
                 {index % 2 === 0 ? <AddCircleIcon /> : <EditRoundedIcon />}
               </ListItemIcon> */}
-                <ListItemText primary={navItem.linkName} />
+                <ListItemText sx={{
+                  color: myColors.textBlack
+                }} primary={navItem.linkName} />
               </ListItemButton>
             </Link>
           </ListItem>
