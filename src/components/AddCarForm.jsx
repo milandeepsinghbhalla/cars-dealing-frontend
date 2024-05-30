@@ -170,6 +170,23 @@ function CarTypeSelector(props) {
     />
   );
 }
+function OldNewSelector(props) {
+  const carTypes = [
+    "New",
+    "Used"
+  ];
+  return (
+    <Autocomplete
+      disablePortal
+      id="oldNewSelector"
+      options={carTypes}
+      onChange={props.onChange}
+      value={props.value}
+      //   sx={{ width: 300 }}
+      renderInput={(params) => <TextField {...params} label="Car Type" />}
+    />
+  );
+}
 
 const AddCarForm = () => {
   const [onForm, setOnForm] = React.useState("basicInformation");
@@ -181,6 +198,7 @@ const AddCarForm = () => {
   const carFormDataInitital = {
     id: "",
     name: "",
+    oldOrNew: "",
     carType: "",
     year: "",
     price: "",
@@ -280,7 +298,7 @@ const AddCarForm = () => {
           Add Basic Car Information
         </Typography>
         <Grid container justifyContent={"space-between"}>
-          <Grid pt={2} item xs={12}>
+          <Grid pt={2} item xs={5}>
             <CssTextField
               onChange={(e) => {
                 setCarFormData((oldState) => {
@@ -293,6 +311,18 @@ const AddCarForm = () => {
               fullWidth
               label="Car Name"
               id="carName"
+            />
+          </Grid>
+          <Grid item xs={5}>
+          <oldNewSelector
+              onChange={(e, newValue) => {
+                setCarFormData((oldState) => {
+                  let newState = { ...oldState };
+                  newState.carType = newValue;
+                  return newState;
+                });
+              }}
+              value={carFormData.oldOrNew}
             />
           </Grid>
         </Grid>
@@ -522,6 +552,7 @@ const AddCarForm = () => {
   );
 
   
+  // const [noOfImages, setNoOfImages] = useState(0);
 
   const ImageAddingComponent = (props) => {
     // const [selectedImage, setSelectedImage] = useState(null);
@@ -532,6 +563,7 @@ const AddCarForm = () => {
 
     // const handleImageChange = (event) => {};
     const handleImageChange = (event) => {
+        console.log('files:-',event.target.files)
         const imageFile = event.target.files[0];
         if (!imageFile) return;
     
@@ -545,8 +577,14 @@ const AddCarForm = () => {
     
         console.log("img-", imageFile);
         finalCarFormData.append(`carImg-${props.currImage}`, imageFile);
+       
+    
+        // console.log('currImage',props.currImage);
+        // finalCarFormData.append('noOfImages',noOfImages);
     
         console.log("finalCarFormDataIMG", finalCarFormData.get(`carImg-${currImage}`));
+        // console.log("finalNoOFImages",finalCarFormData.get('noOfImages'));
+        // console.log('finalColor',finalCarFormData.get('color'))
         // Preview image (optional)
         const reader = new FileReader();
         reader.readAsDataURL(imageFile);
@@ -623,6 +661,8 @@ const AddCarForm = () => {
               <CustomButton
                 onClick={() => {
                   setcurrImage((old) => old + 1);
+                  // props.setNoOfImages((old)=> old +1);
+                  // finalCarFormData.append('noOfImages',noOfImages);
                   setShowAnotherImageUploader(true);
                 }}
                 variant="contained"
@@ -634,7 +674,6 @@ const AddCarForm = () => {
         </Grid>
         {showAnotherImageUploader && (
           <ImageAddingComponent
-        
             currImage={currImage}
             totalImages={3}
           />
@@ -655,7 +694,7 @@ const AddCarForm = () => {
         {onForm == "specificationInformation" && specificationForm}
         {onForm == "addImages" && (
           <ImageAddingComponent
-           
+          
             currImage={0}
             totalImages={3}
           />
@@ -708,6 +747,20 @@ const AddCarForm = () => {
                   });
                   console.log(finalCarFormData);
                   console.log(finalCarFormData.get('brand'))
+                  console.log(finalCarFormData.get('carImg-0'))
+                  console.log(finalCarFormData.get('carImg-1'))
+                  console.log(finalCarFormData.get('carImg-0'))
+
+                  fetch("http://localhost:7777/add-car", {
+                    method: "POST",
+                    body: finalCarFormData,
+
+                  })
+                  .then(res=>{
+                    console.log('result :-',res);
+                  })
+
+
                 }}
               >
                 Add Car

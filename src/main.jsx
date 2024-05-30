@@ -17,6 +17,7 @@ import './index.css'
 import Navbar from './components/Navbar.jsx';
 import HomePage from './pageComponents/HomePage.jsx';
 import DashboardAdmin from './pageComponents/DashboardAdmin.jsx';
+import RegistrationPage from './pageComponents/RegistrationPage.jsx';
 
 // const db = getDatabase(app);
 
@@ -31,13 +32,17 @@ const router = createBrowserRouter([
     {
       path: '/dashboard',
       element: <DashboardAdmin />
+    },
+    {
+      path: '/register',
+      element: <RegistrationPage />
     }
   ]
   },
  
 ])
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
+  
     <RouterProvider router={router} />
-  </React.StrictMode>,
+  
 )

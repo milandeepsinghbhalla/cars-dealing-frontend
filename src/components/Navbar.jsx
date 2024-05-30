@@ -116,7 +116,9 @@ export default function Navbar() {
     <>
       <div style={NavLinkStyles}>
         <Button sx={NavLinkStyles}>Home</Button>
-        <Button sx={NavLinkStyles}>All Vehicles</Button>
+        <Button sx={NavLinkStyles}>New Cars</Button>
+        <Button sx={NavLinkStyles}>Used Cars</Button>
+
         <Link to={"/dashboard"}>
           <Button sx={NavLinkStyles}>Dashboard</Button>
         </Link>
