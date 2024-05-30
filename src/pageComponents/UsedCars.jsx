@@ -1,12 +1,14 @@
+
+
 import { Grid, Typography } from "@mui/material"
 import { useEffect, useState } from "react"
 import links from "../assets/util/links"
 import CarCardComponent from "../components/carCardComponent"
 
-const NewCars = ()=>{
-    const [newCars,setNewCars] = useState([])
+const UsedCars = ()=>{
+    const [usedCars,setUsedCars] = useState([])
     useEffect(()=>{
-        let url = links.backendUrl + '/get-new-cars'
+        let url = links.backendUrl + '/get-used-cars'
         fetch(url)
         .then(data=>{
             console.log('response',data)
@@ -14,7 +16,7 @@ const NewCars = ()=>{
         })
         .then(carsData=>{
             console.log('cars:- ',carsData)
-            setNewCars(carsData.cars);
+            setUsedCars(carsData.cars);
         })
 
     },[])
@@ -27,11 +29,11 @@ const NewCars = ()=>{
                 <Grid item xs={8}>
 
                 <Typography variant="h5">
-                    New Cars
+                    Used Cars
                 </Typography>
                 </Grid>
                 <Grid container justifyContent={'center'} xs={12} spacing={1} md={8}>
-                    {newCars.map((newCar)=>{
+                    {usedCars.map((newCar)=>{
                         return (
                             <Grid item xs={11} md={4}>
                                 <CarCardComponent car = {newCar} />
@@ -46,4 +48,4 @@ const NewCars = ()=>{
     )
 }
 
-export default NewCars;
+export default UsedCars;

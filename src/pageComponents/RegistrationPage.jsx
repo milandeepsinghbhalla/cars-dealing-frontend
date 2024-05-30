@@ -58,6 +58,7 @@ const RegistrationPage = () => {
               })
               .then(response =>{
                 if(response.status<200 || response.status>299){
+
                     alert('error while signing up');
                 }
                 return response.json();
@@ -67,6 +68,7 @@ const RegistrationPage = () => {
               })
               .catch(error => {
                 console.error(error);
+                alert(error.message)
               });
         }
     }

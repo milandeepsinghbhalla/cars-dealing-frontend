@@ -6,7 +6,9 @@ const Jumbotron = () => {
   // }
   return (
     <>
-      <Grid
+    
+
+      <Grid container
         sx={{
           backgroundImage: `url(${jumbotronImg})`,
           backgroundPosition: "center",
@@ -34,6 +36,7 @@ const Jumbotron = () => {
           </Typography>
         </section>
       </Grid>
+    
     </>
   );
 };

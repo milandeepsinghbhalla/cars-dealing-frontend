@@ -1,9 +1,14 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
+// import React, { createContext } from 'react';
+import { Provider } from 'react-redux';
+
 import {
   createBrowserRouter,
   RouterProvider,
 } from "react-router-dom";
+
+
 
 // import App from './App.jsx'
 import '@fontsource/roboto/300.css';
@@ -18,8 +23,16 @@ import Navbar from './components/Navbar.jsx';
 import HomePage from './pageComponents/HomePage.jsx';
 import DashboardAdmin from './pageComponents/DashboardAdmin.jsx';
 import RegistrationPage from './pageComponents/RegistrationPage.jsx';
+import LoginPage from './pageComponents/LoginPage.jsx';
+import { store } from './reduxStore/store.js';
+import NewCars from './pageComponents/NewCars.jsx';
+import UsedCars from './pageComponents/UsedCars.jsx';
 
 // const db = getDatabase(app);
+
+// const userContext = createContext();
+
+
 
 const router = createBrowserRouter([
   {
@@ -36,13 +49,27 @@ const router = createBrowserRouter([
     {
       path: '/register',
       element: <RegistrationPage />
+    },
+    {
+      path: '/login',
+      element: <LoginPage />
+    },
+    {
+      path: '/new-cars',
+      element: <NewCars />
+    },
+    {
+      path: '/used-cars',
+      element: <UsedCars />
     }
   ]
   },
  
 ])
 ReactDOM.createRoot(document.getElementById('root')).render(
-  
-    <RouterProvider router={router} />
+    <Provider store={store}>
+
+      <RouterProvider router={router} />
+    </Provider>
   
 )

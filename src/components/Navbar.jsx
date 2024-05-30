@@ -6,15 +6,24 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import myColors from "../assets/util/myColors";
 import logo from "../assets/images/logo.png";
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useNavigate } from "react-router-dom";
 import { useWindowWidth } from "@react-hook/window-size";
 import MenuIcon from "@mui/icons-material/Menu";
 import IconButton from "@mui/material/IconButton";
-import { Drawer, List, ListItem, ListItemButton, ListItemText } from "@mui/material";
+import {
+  Drawer,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemText,
+} from "@mui/material";
 // import MobileNavbarDrawer from "";
 // import MobileNavbarDrawer from "./mobileNavbarDrawer";
 
 // import MenuIcon from '@mui/icons-material/Menu';
+import Footer from "./Footer";
+import { useSelector, useDispatch } from "react-redux";
+import { loginUser, logoutUser } from "../reduxStore/userDataSlice";
 const navLinks = [
   {
     linkName: "Home",
@@ -22,14 +31,14 @@ const navLinks = [
     visibleTo: "All",
   },
   {
-    linkName: "All Cars",
-    link: "/all-cars",
+    linkName: "New Cars",
+    link: "/new-cars",
     visibleTo: "All",
   },
   {
-    linkName: "Dashboard",
-    link: "/Dashboard",
-    visibleTo: "Admin",
+    linkName: "Used Cars",
+    link: "/used-cars",
+    visibleTo: "All",
   },
   {
     linkName: "Profile",
@@ -41,24 +50,105 @@ const navLinks = [
     link: "/our-story",
     visibleTo: "All",
   },
+];
+
+const adminLinks = [
   {
-    linkName: "Contact Us",
-    link: "/contact-us",
-    visibleTo: "All",
+    linkName: "Dashboard",
+    link: "/Dashboard",
+    visibleTo: "Admin",
   },
+];
+
+const dynamicLink = [
   {
     linkName: "Login",
     link: "/login",
     visibleTo: "All",
   },
+
   {
     linkName: "Sign Up",
-    link: "/sign-up",
+    link: "/register",
     visibleTo: "All",
   },
 ];
 
+// const dynamicLink = [
+//   {
+//     linkName: "Login",
+//     link: "/login",
+//     visibleTo: "All",
+//   },
+// ]
+
 const MobileNavbarDrawer = (props) => {
+  const firstName = useSelector((state) => state.userDataSlice.firstName);
+  const role = useSelector((state) => state.userDataSlice.role);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const logoutHandler = () => {
+    dispatch(logoutUser());
+    localStorage.removeItem("userData");
+    navigate('/login',{replace: true})
+
+  };
+
+  const loginMobileLink = (
+    <>
+      <ListItem disablePadding>
+        <Link color={myColors.textBlack} to={"/login"}>
+          <ListItemButton>
+            {/* <ListItemIcon>
+                  {index % 2 === 0 ? <AddCircleIcon /> : <EditRoundedIcon />}
+                </ListItemIcon> */}
+            <ListItemText
+              sx={{
+                color: myColors.textBlack,
+              }}
+              primary={"Login"}
+            />
+          </ListItemButton>
+        </Link>
+      </ListItem>
+      <ListItem disablePadding>
+        <Link color={myColors.textBlack} to={"/register"}>
+          <ListItemButton>
+            {/* <ListItemIcon>
+                  {index % 2 === 0 ? <AddCircleIcon /> : <EditRoundedIcon />}
+                </ListItemIcon> */}
+            <ListItemText
+              sx={{
+                color: myColors.textBlack,
+              }}
+              primary={"Sign Up"}
+            />
+          </ListItemButton>
+        </Link>
+      </ListItem>
+    </>
+  );
+
+  const logoutMobileLink = (
+    <>
+      <ListItem disablePadding>
+        {/* <Link color={myColors.textBlack} to={"/login"}> */}
+        <ListItemButton onClick={logoutHandler}>
+          {/* <ListItemIcon>
+                  {index % 2 === 0 ? <AddCircleIcon /> : <EditRoundedIcon />}
+                </ListItemIcon> */}
+          <ListItemText
+            sx={{
+              color: myColors.textBlack,
+            }}
+            primary={"Logout"}
+          />
+        </ListItemButton>
+        {/* </Link> */}
+      </ListItem>
+    </>
+  );
+
   return (
     <Box sx={{ width: 250 }} role="presentation" onClick={props.closeDrawer}>
       <div>
@@ -74,20 +164,62 @@ const MobileNavbarDrawer = (props) => {
         </IconButton>
       </div>
       <List>
-        {navLinks.map((navItem, index) => (
-          <ListItem key={index} disablePadding>
-            <Link color={myColors.textBlack} to={navItem.link}>
-              <ListItemButton>
-                {/* <ListItemIcon>
+        <ListItem disablePadding>
+          <ListItemButton>
+            {/* <ListItemIcon>
                 {index % 2 === 0 ? <AddCircleIcon /> : <EditRoundedIcon />}
               </ListItemIcon> */}
-                <ListItemText sx={{
-                  color: myColors.textBlack
-                }} primary={navItem.linkName} />
-              </ListItemButton>
-            </Link>
-          </ListItem>
+            <ListItemText
+              sx={{
+                color: myColors.textBlack,
+              }}
+              primary={`Hi ${firstName}`}
+            />
+          </ListItemButton>
+        </ListItem>
+        {navLinks.map((navItem, index) => (
+          <>
+            <ListItem key={index} disablePadding>
+              <Link color={myColors.textBlack} to={navItem.link}>
+                <ListItemButton>
+                  {/* <ListItemIcon>
+                {index % 2 === 0 ? <AddCircleIcon /> : <EditRoundedIcon />}
+              </ListItemIcon> */}
+                  <ListItemText
+                    sx={{
+                      color: myColors.textBlack,
+                    }}
+                    primary={navItem.linkName}
+                  />
+                </ListItemButton>
+              </Link>
+            </ListItem>
+          </>
         ))}
+        {role == "admin" &&
+          adminLinks.map((linkItem, index) => {
+            return (
+              <>
+                <ListItem key={index} disablePadding>
+                  <Link color={myColors.textBlack} to={linkItem.link}>
+                    <ListItemButton>
+                      {/* <ListItemIcon>
+                {index % 2 === 0 ? <AddCircleIcon /> : <EditRoundedIcon />}
+              </ListItemIcon> */}
+                      <ListItemText
+                        sx={{
+                          color: myColors.textBlack,
+                        }}
+                        primary={linkItem.linkName}
+                      />
+                    </ListItemButton>
+                  </Link>
+                </ListItem>
+              </>
+            );
+          })}
+        {firstName == "Guest" && loginMobileLink}
+        {firstName != "Guest" && logoutMobileLink}
       </List>
       {/* <Divider /> */}
       {/* <List>
@@ -104,6 +236,21 @@ const MobileNavbarDrawer = (props) => {
   );
 };
 export default function Navbar() {
+  const dispatch = useDispatch();
+  React.useEffect(() => {
+    if (localStorage.getItem("userData")) {
+      let userData = JSON.parse(localStorage.getItem("userData"));
+      dispatch(loginUser({ userData: userData }));
+    }
+  }, []);
+
+  const navigate = useNavigate()
+
+  const logoutHandler = () => {
+    dispatch(logoutUser());
+    localStorage.removeItem("userData");
+    navigate('/login',{replace: true})
+  };
   const appBarStyles = {
     backgroundColor: myColors.offWhite,
   };
@@ -111,23 +258,69 @@ export default function Navbar() {
     color: myColors.textBlack,
   };
   const width = useWindowWidth();
+  const firstName = useSelector((state) => state.userDataSlice.firstName);
+  const role = useSelector((state) => state.userDataSlice.role);
+
+
+  const loginDesktopLink = (
+    <>
+      <Link to={"/login"}>
+        <Button sx={NavLinkStyles}>Login</Button>
+      </Link>
+      <Link to={"/register"}>
+        <Button sx={NavLinkStyles}>Sign Up</Button>
+      </Link>
+    </>
+  );
+
+  const logoutDesktopLink = (
+    <>
+      <Button sx={NavLinkStyles} onClick={logoutHandler}>
+        Logout
+      </Button>
+    </>
+  );
 
   const desktopMenu = (
     <>
       <div style={NavLinkStyles}>
-        <Button sx={NavLinkStyles}>Home</Button>
+        {/* <Button sx={NavLinkStyles}>Home</Button>
         <Button sx={NavLinkStyles}>New Cars</Button>
-        <Button sx={NavLinkStyles}>Used Cars</Button>
+        <Button sx={NavLinkStyles}>Used Cars</Button> */}
 
-        <Link to={"/dashboard"}>
+        {/* <Link to={"/dashboard"}>
           <Button sx={NavLinkStyles}>Dashboard</Button>
-        </Link>
-        <Button sx={NavLinkStyles}>Our Story</Button>
+        </Link> */}
+        <Button sx={NavLinkStyles}>{`Hi ${firstName}`}</Button>
+
+        {navLinks.map((linkObj) => {
+          return (
+            <>
+              <Link to={linkObj.link}>
+                <Button sx={NavLinkStyles}>{linkObj.linkName}</Button>
+              </Link>
+            </>
+          );
+        })}
+        {role == "admin" &&
+          adminLinks.map((linkObj) => {
+            return (
+              <>
+                <Link to={linkObj.link}>
+                  <Button sx={NavLinkStyles}>{linkObj.linkName}</Button>
+                </Link>
+              </>
+            );
+          })}
+        {firstName == "Guest" && loginDesktopLink}
+        {firstName != "Guest" && logoutDesktopLink}
+
+        {/* <Button sx={NavLinkStyles}>Our Story</Button>
 
         <Button sx={NavLinkStyles}>Contact Us</Button>
 
         <Button sx={NavLinkStyles}>Login</Button>
-        <Button sx={NavLinkStyles}>Sign Up</Button>
+        <Button sx={NavLinkStyles}>Sign Up</Button> */}
       </div>
     </>
   );
@@ -190,6 +383,8 @@ export default function Navbar() {
       </Box>
 
       <Outlet />
+
+      <Footer />
     </>
   );
 }

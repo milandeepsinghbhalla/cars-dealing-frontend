@@ -11,6 +11,8 @@ import CustomButton from "./CustomButton";
 import { useState } from "react";
 // import { Button, TextField, IconButton } from '@mui/material';
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 // import { imageDb } from "../firebase";
 // import { ref } from "firebase/storage";
 
@@ -183,7 +185,7 @@ function OldNewSelector(props) {
       onChange={props.onChange}
       value={props.value}
       //   sx={{ width: 300 }}
-      renderInput={(params) => <TextField {...params} label="Car Type" />}
+      renderInput={(params) => <TextField {...params} label="Old Or New" />}
     />
   );
 }
@@ -192,6 +194,9 @@ const AddCarForm = () => {
   const [onForm, setOnForm] = React.useState("basicInformation");
   //   const carFormData = new FormData();
   const finalCarFormData = new FormData();
+  const adminEmail = useSelector((state)=>state.userDataSlice.email)
+  console.log('adminEmail:- ',adminEmail);
+  finalCarFormData.append('email',adminEmail)
   const nextClickedHandler = (page) => {
     setOnForm(page);
   };
@@ -313,12 +318,12 @@ const AddCarForm = () => {
               id="carName"
             />
           </Grid>
-          <Grid item xs={5}>
-          <oldNewSelector
+          <Grid pt={2} item xs={5}>
+          <OldNewSelector
               onChange={(e, newValue) => {
                 setCarFormData((oldState) => {
                   let newState = { ...oldState };
-                  newState.carType = newValue;
+                  newState.oldOrNew = newValue;
                   return newState;
                 });
               }}
@@ -556,6 +561,7 @@ const AddCarForm = () => {
 
   const ImageAddingComponent = (props) => {
     // const [selectedImage, setSelectedImage] = useState(null);
+    const navigate = useNavigate()
     const [imageUrl, setImageUrl] = useState(null);
     const [currImage, setcurrImage] = useState(props.currImage);
     const [showAnotherImageUploader, setShowAnotherImageUploader] =
@@ -605,6 +611,7 @@ const AddCarForm = () => {
         .then((response) => response.json())
         .then((data) => {
           console.log("Image upload success:", data);
+         
           // Handle successful upload response (e.g., clear form, display success message)
         })
         .catch((error) => {
@@ -758,6 +765,10 @@ const AddCarForm = () => {
                   })
                   .then(res=>{
                     console.log('result :-',res);
+                    return res.json()
+                  })
+                  .then(res=>{
+                    navigate('/');
                   })
 
 

@@ -6,8 +6,8 @@ import AddCarForm from "../components/AddCarForm.jsx";
 const DashboardAdmin = ()=>{
 
     useEffect(()=>{
-        let tataPunch = Car(1,'Tata Punch','Micro-Suv',2021,34523,'Tata');
-        console.log('Tata punch:- ',tataPunch);
+        // let tataPunch = Car(1,'Tata Punch','Micro-Suv',2021,34523,'Tata');
+        // console.log('Tata punch:- ',tataPunch);
     },[])
 
     return (
