@@ -26,14 +26,14 @@ const NewCars = ()=>{
             <Grid container mt={3} mb={3} justifyContent={'center'}>
                 <Grid item xs={8}>
 
-                <Typography variant="h5">
+                <Typography mb={2} variant="h5">
                     New Cars
                 </Typography>
                 </Grid>
-                <Grid container justifyContent={'center'} xs={12} spacing={1} md={8}>
+                <Grid container justifyContent={'center'}  xs={12} spacing={2} md={9}>
                     {newCars.map((newCar)=>{
                         return (
-                            <Grid item xs={11} md={4}>
+                            <Grid item xs={11} mb={2} md={4}>
                                 <CarCardComponent car = {newCar} />
                             </Grid>
                         )

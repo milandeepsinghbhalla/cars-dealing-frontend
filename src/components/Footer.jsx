@@ -96,9 +96,11 @@ const Footer = () => {
           backgroundColor: myColors.textBlack,
           color: myColors.myGrey,
         }}
+        justifyContent={'space-around'}
       >
-        <Grid item p={3} xs={6}>
-          <Typography ml={2} mb={1} color={myColors.offWhite} variant="h6">
+        <Grid item mb={3.2}  xs={10} md={6}>
+         
+          <Typography  mb={1} color={myColors.offWhite} variant="h6">
             Sign Up For News-Letter.
           </Typography>
           <input
@@ -122,8 +124,8 @@ const Footer = () => {
             </Button>
           </Grid>
         </Grid>
-        <Grid item p={3} xs={6}>
-          <Typography ml={2} mb={1} color={myColors.offWhite} variant="h6">
+        <Grid item  mb={3.2} xs={10} md={6}>
+          <Typography  mb={1} color={myColors.offWhite} variant="h6">
             Contact Us.
           </Typography>
           <input

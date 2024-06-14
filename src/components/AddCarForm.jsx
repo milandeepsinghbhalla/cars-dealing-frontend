@@ -13,6 +13,8 @@ import { useState } from "react";
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import links from "../assets/util/links";
+import MultipleImageAddingComponent from "./MultipleImageAddingComponent";
 // import { imageDb } from "../firebase";
 // import { ref } from "firebase/storage";
 
@@ -558,12 +560,21 @@ const AddCarForm = () => {
 
   
   // const [noOfImages, setNoOfImages] = useState(0);
-
+  const navigate = useNavigate()
+  // const [allImages,setAllImages] = useState([]);
   const ImageAddingComponent = (props) => {
     // const [selectedImage, setSelectedImage] = useState(null);
-    const navigate = useNavigate()
+
+    React.useEffect(()=>{
+      console.log('current image number',currImage);
+      console.log('props current image number',props.currImage);
+
+    },[])
+   
     const [imageUrl, setImageUrl] = useState(null);
     const [currImage, setcurrImage] = useState(props.currImage);
+    const [allImages,setAllImages] = useState(props.allImages);
+
     const [showAnotherImageUploader, setShowAnotherImageUploader] =
       useState(false);
 
@@ -582,13 +593,29 @@ const AddCarForm = () => {
         // setSelectedImage(imageFile);
     
         console.log("img-", imageFile);
-        finalCarFormData.append(`carImg-${props.currImage}`, imageFile);
+        // finalCarFormData.append(`carImg-${props.currImage}`, imageFile);
+        // finalCarFormData.append('carImages[]', imageFile);
+        setAllImages((oldState)=>{
+          let newState = [...oldState];
+          // console.log('oldFileState:-', oldState);
+          newState.push(imageFile);
+          finalCarFormData.append('images[]',imageFile)
+          console.log('newImagesState:- ',newState);
+          localStorage.setItem('noOfImages:- ',newState.length)
+          return newState;
+        })
+        // allImages.forEach((file)=>{
+          
+        //   finalCarFormData.append(`carImages[]`, allImages);
+        // })
+        // console.log('allImagesInner:- ',allImages)
+
        
     
         // console.log('currImage',props.currImage);
         // finalCarFormData.append('noOfImages',noOfImages);
     
-        console.log("finalCarFormDataIMG", finalCarFormData.get(`carImg-${currImage}`));
+        // console.log("finalCarFormDataIMG", finalCarFormData.get(`carImg-${currImage}`));
         // console.log("finalNoOFImages",finalCarFormData.get('noOfImages'));
         // console.log('finalColor',finalCarFormData.get('color'))
         // Preview image (optional)
@@ -597,28 +624,6 @@ const AddCarForm = () => {
         reader.onload = (e) => setImageUrl(e.target.result);
       };
 
-    const handleSubmit = (event) => {
-      event.preventDefault();
-
-      // Handle image upload to your backend API here
-      // const formData = new FormData();
-
-      // Example using fetch API (replace with your backend interaction logic)
-      fetch("/api/upload-image", {
-        method: "POST",
-        body: formData,
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          console.log("Image upload success:", data);
-         
-          // Handle successful upload response (e.g., clear form, display success message)
-        })
-        .catch((error) => {
-          console.error("Image upload error:", error);
-          // Handle upload errors
-        });
-    };
 
     return (
       // <form onSubmit={handleSubmit}>
@@ -638,7 +643,7 @@ const AddCarForm = () => {
           mt={3}
         >
           <Typography textAlign={"center"} variant="h5">
-            Add Car Images
+            Add Car Images [Max: 5]
           </Typography>
 
           <Grid item xs={11}>
@@ -663,13 +668,14 @@ const AddCarForm = () => {
               <img src={imageUrl} alt="Preview" style={{ maxWidth: "300px" }} />
             )}
           </Grid>
-          {currImage < 3 && (
+          {currImage < 4 && (
             <Grid pt={2} container>
               <CustomButton
                 onClick={() => {
                   setcurrImage((old) => old + 1);
                   // props.setNoOfImages((old)=> old +1);
                   // finalCarFormData.append('noOfImages',noOfImages);
+                  // localStorage.setItem('noOfImages',currImage);
                   setShowAnotherImageUploader(true);
                 }}
                 variant="contained"
@@ -682,7 +688,9 @@ const AddCarForm = () => {
         {showAnotherImageUploader && (
           <ImageAddingComponent
             currImage={currImage}
+            allImages = {allImages}
             totalImages={3}
+
           />
         )}
       </>
@@ -693,7 +701,13 @@ const AddCarForm = () => {
       // </form>
     );
   };
-
+  const handleImageChange = (event) => {
+    const newImages = Array.from(event.target.files); // Convert FileList to array
+    setSelectedImages((prevImages) => [...prevImages, ...newImages]);
+    for (const image of newImages) {
+      finalCarFormData.append('images[]', image); // Append each image to the form data with the key 'images[]' (an array)
+    }
+  };
   return (
     <>
       <Grid container justifyContent={"center"}>
@@ -701,10 +715,11 @@ const AddCarForm = () => {
         {onForm == "specificationInformation" && specificationForm}
         {onForm == "addImages" && (
           <ImageAddingComponent
-          
+            allImages = {[]}
             currImage={0}
             totalImages={3}
           />
+          // <MultipleImageAddingComponent handleImageChange={handleImageChange} />
         )}
         <Grid container mt={3} xs={12} justifyContent={"center"}>
           <Grid item pl={2} xs={10} md={7}>
@@ -758,17 +773,33 @@ const AddCarForm = () => {
                   console.log(finalCarFormData.get('carImg-1'))
                   console.log(finalCarFormData.get('carImg-0'))
 
-                  fetch("http://localhost:7777/add-car", {
+                  console.log('no of images:- ',localStorage.getItem('noOfImages'));
+                  // console.log('all images',finalCarFormData.get('carImages[]'));
+
+                  // console.log('all images',)
+
+                  fetch(links.backendUrl +  "/add-car", {
                     method: "POST",
                     body: finalCarFormData,
 
                   })
                   .then(res=>{
                     console.log('result :-',res);
+                    if(res.status<200 || res.status>299){
+                      let newError = 'some error'
+                      throw newError;
+                    }
                     return res.json()
                   })
                   .then(res=>{
-                    navigate('/');
+                    if((finalCarFormData.get('oldOrNew') )== 'new' || (finalCarFormData.get('oldOrNew'))== 'New')
+                      navigate('/new-cars');
+                    else 
+                      navigate('/used-cars');
+                  })
+                  .catch(err=>{
+                    console.log('error:-',err);
+                    alert('error while adding car.')
                   })
 
 

@@ -5,9 +5,10 @@ const userDataSlice = createSlice({
     name: 'userData',
     initialState: { 
       firstName: 'Guest',
-      lastName: '',
-      email: '',
-      role: 'customer'
+      // lastName: '',
+      // email: '',
+      role: 'customer',
+      token: ''
      },
     reducers: {
       // increment: (state) => { state.count += 1; },
@@ -15,8 +16,9 @@ const userDataSlice = createSlice({
       loginUser: (state,action)=>{
         console.log('action:- ',action)
           state.firstName = action.payload.userData.firstName;
-          state.lastName = action.payload.userData.lastName;
-          state.email = action.payload.userData.email;
+          state.token = action.payload.token;
+          // state.lastName = action.payload.userData.lastName;
+          // state.email = action.payload.userData.email;
           state.role = action.payload.userData.role;
           return state;
 
@@ -24,8 +26,8 @@ const userDataSlice = createSlice({
       logoutUser: (state)=>{
           state = { 
               firstName: 'Guest',
-              lastName: '',
-              email: '',
+              // lastName: '',
+              // email: '',
               role: 'customer'
           }
           return state;

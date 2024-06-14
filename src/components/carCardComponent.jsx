@@ -7,6 +7,7 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import myColors from '../assets/util/myColors';
 import links from '../assets/util/links';
+import { Link } from 'react-router-dom';
 
 const  CarCardComponent = (props)=> {
 
@@ -56,7 +57,12 @@ const  CarCardComponent = (props)=> {
         </Typography>
       </CardContent>
       <CardActions>
-        <Button size="small">Learn More</Button>
+        <Link to={`/car-details/${props.car._id}`}>
+        
+        <Button size="small" onClick={()=>{
+          console.log('car id:- ',props.car._id)
+        }}>Learn More</Button>
+        </Link>
         <Button size="small">Enquire</Button>
       </CardActions>
     </Card>

@@ -27,6 +27,7 @@ import LoginPage from './pageComponents/LoginPage.jsx';
 import { store } from './reduxStore/store.js';
 import NewCars from './pageComponents/NewCars.jsx';
 import UsedCars from './pageComponents/UsedCars.jsx';
+import CarDetailsPage from './pageComponents/CarDetailsPage.jsx';
 
 // const db = getDatabase(app);
 
@@ -61,6 +62,10 @@ const router = createBrowserRouter([
     {
       path: '/used-cars',
       element: <UsedCars />
+    },
+    {
+      path: '/car-details/:carId',
+      element: <CarDetailsPage />
     }
   ]
   },
