@@ -16,7 +16,7 @@ const userDataSlice = createSlice({
       loginUser: (state,action)=>{
         console.log('action:- ',action)
           state.firstName = action.payload.userData.firstName;
-          state.token = action.payload.token;
+          state.userToken = action.payload.userData.userToken;
           // state.lastName = action.payload.userData.lastName;
           // state.email = action.payload.userData.email;
           state.role = action.payload.userData.role;
@@ -28,7 +28,8 @@ const userDataSlice = createSlice({
               firstName: 'Guest',
               // lastName: '',
               // email: '',
-              role: 'customer'
+              role: 'customer',
+              token: ''
           }
           return state;
       }

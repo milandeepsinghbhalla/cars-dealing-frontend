@@ -90,8 +90,7 @@ const MobileNavbarDrawer = (props) => {
   const logoutHandler = () => {
     dispatch(logoutUser());
     localStorage.removeItem("userData");
-    navigate('/login',{replace: true})
-
+    navigate("/login", { replace: true });
   };
 
   const loginMobileLink = (
@@ -240,16 +239,25 @@ export default function Navbar() {
   React.useEffect(() => {
     if (localStorage.getItem("userData")) {
       let userData = JSON.parse(localStorage.getItem("userData"));
-      dispatch(loginUser({ userData: userData }));
+      let date = Date.now();
+      console.log('expiry , date',userData.expiry,date)
+      if (userData.expiry < date) {
+        alert("Your session is expired please login again to continue.");
+        dispatch(logoutUser());
+        localStorage.removeItem("userData");
+        navigate("/login");
+      } else {
+        dispatch(loginUser({ userData: userData }));
+      }
     }
   }, []);
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const logoutHandler = () => {
     dispatch(logoutUser());
     localStorage.removeItem("userData");
-    navigate('/login',{replace: true})
+    navigate("/login", { replace: true });
   };
   const appBarStyles = {
     backgroundColor: myColors.offWhite,
@@ -260,7 +268,6 @@ export default function Navbar() {
   const width = useWindowWidth();
   const firstName = useSelector((state) => state.userDataSlice.firstName);
   const role = useSelector((state) => state.userDataSlice.role);
-
 
   const loginDesktopLink = (
     <>

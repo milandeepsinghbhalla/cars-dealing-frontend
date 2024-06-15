@@ -3,7 +3,7 @@ import logo from "../assets/images/logo.png";
 import { Password } from "@mui/icons-material";
 import { useState } from "react";
 import links from "../assets/util/links";
-import { useDispatch } from 'react-redux';
+import { useDispatch } from "react-redux";
 // import { userDataSlice } from "../reduxStore/store";
 import { loginUser } from "../reduxStore/userDataSlice";
 import { useNavigate } from "react-router-dom";
@@ -34,33 +34,35 @@ const LoginPage = () => {
       error.err = true;
       error.message = "Not a valid email.";
     }
-    if(error.err){
-      alert(error.message)
+    if (error.err) {
+      alert(error.message);
     }
-    if(!error.err){
-      let url  = links.backendUrl + '/login-customer';
+    if (!error.err) {
+      let url = links.backendUrl + "/login-customer";
       fetch(url, {
-        method: 'POST',
+        method: "POST",
         body: JSON.stringify(loginFormData), // This is the data you want to send
-        headers: { 'Content-Type': 'application/json' } // Specify JSON content
+        headers: { "Content-Type": "application/json" }, // Specify JSON content
       })
-      .then(response =>{
-        if(response.status<200 || response.status>299){
-            alert('error while loging in.');
-        }
-        return response.json();
-      } )
-      .then(data => {
-        console.log('login Data:- ',data);
-        dispatch(loginUser({userData: data.userData}))
-        localStorage.setItem('userData',JSON.stringify(data.userData))
-        navigate('/', { replace: true });
-
-      })
-      .catch(error => {
-        console.error('login error:- ',error);
-        alert(error.message);
-      });
+        .then((response) => {
+          if (response.status < 200 || response.status > 299) {
+            alert("error while loging in.");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          console.log("login Data:- ", data);
+          dispatch(loginUser({ userData: data.userData }));
+          const now = Date.now();
+          const expiry = now + 3600000;
+          data.userData.expiry = expiry;
+          localStorage.setItem("userData", JSON.stringify(data.userData));
+          navigate("/", { replace: true });
+        })
+        .catch((error) => {
+          console.error("login error:- ", error);
+          alert(error.message);
+        });
     }
   };
 

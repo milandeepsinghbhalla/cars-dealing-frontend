@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 // import Car from "../models/Car.js";
 import { Grid } from "@mui/material";
 import DashboardDrawer from "../components/DashboardDrawer.jsx";
@@ -9,7 +9,7 @@ import AdminCheckDialog from "../components/AdminCheckDialog.jsx";
 const DashboardAdmin = ()=>{
 
     const [isAdmin,setIsAdmin] = useState(false)
-    const [open, setOpen] = React.useState(false);
+    const [open, setOpen] = useState(false);
 
     const handleClickOpen = () => {
       setOpen(true);
@@ -20,6 +20,8 @@ const DashboardAdmin = ()=>{
     };
   
 
+    const userToken = (JSON.parse(localStorage.getItem('userData'))).userToken ;
+    console.log('userToken',userToken);
     useEffect(()=>{
         // let tataPunch = Car(1,'Tata Punch','Micro-Suv',2021,34523,'Tata');
         // console.log('Tata punch:- ',tataPunch);
@@ -29,11 +31,10 @@ const DashboardAdmin = ()=>{
 
         // })
         let url = links.backendUrl + '/check-admin'
-        const userToken = useSelector ((state) => state.userDataSlice.token);
         fetch(url, {
             method: 'POST',
             headers: {
-              'Authorization': `Bearer ${userToken}`,
+              'authorization': `Bearer ${userToken}`,
               // Add other headers if needed (e.g., Content-Type)
             },
             // Optional: body containing the data to send
@@ -44,7 +45,7 @@ const DashboardAdmin = ()=>{
                 // let newError = {}
                 result.json().then(err=>{
                     console.log('error while admin check',err)
-                    alert('error while admin check')
+                    // alert('error while admin check')
                 })
             }
             return result.json()

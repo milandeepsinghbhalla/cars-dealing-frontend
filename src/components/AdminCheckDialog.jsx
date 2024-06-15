@@ -1,5 +1,5 @@
 
-import * as React from 'react';
+// import * as React from 'react';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -7,13 +7,14 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Slide from '@mui/material/Slide';
+import { forwardRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const Transition = React.forwardRef(function Transition(props, ref) {
-  return <Slide direction="up" ref={ref} {...props} />;
-});
 
-function AdminCheckDialog() {
+function AdminCheckDialog(props) {
+  const Transition = forwardRef(function Transition(props, ref) {
+    return <Slide direction="up" ref={ref} {...props} />;
+  });
 
     let navigate = useNavigate();
     let goToHome = ()=>{
@@ -24,7 +25,8 @@ function AdminCheckDialog() {
     }
 
   return (
-    <React.Fragment>
+    <>
+    
       {/* <Button variant="outlined" onClick={handleClickOpen}>
         Slide in alert dialog
       </Button> */}
@@ -46,7 +48,8 @@ function AdminCheckDialog() {
           <Button onClick={goToLogin}>Login</Button>
         </DialogActions>
       </Dialog>
-    </React.Fragment>
+    </>
+    
   );
 }
 
