@@ -6,7 +6,7 @@ import Modal from "@mui/material/Modal";
 import { Grid, Rating, TextField } from "@mui/material";
 import importantFormFunctions from "../assets/util/importantFormFunctions";
 import links from "../assets/util/links";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const style = {
   position: "absolute",
@@ -21,10 +21,14 @@ const style = {
 };
 
 function BasicModal({ openModal, handleCloseModal }) {
+  const navigate = useNavigate()
   const params = useParams();
     // const [carRatingValue,setCarRatingValue] = React.useState(0);
-    const userToken = (JSON.parse(localStorage.getItem('userData'))).userToken ;
-    console.log('userToken',userToken);
+    if(localStorage.getItem('userData')){
+
+      const userToken = (JSON.parse(localStorage.getItem('userData'))).userToken ;
+      console.log('userToken',userToken);
+    }
     const [reviewFormData,setReviewFormData] = React.useState({
       carRating: {
         value: null,
@@ -55,27 +59,33 @@ function BasicModal({ openModal, handleCloseModal }) {
           carReviewText: reviewFormData.carReviewText.value,
           carId: params.carId
         }
-        fetch(links.backendUrl + '/post-review',{
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'authorization': `Bearer ${userToken}`
-          },
-          body: JSON.stringify(reviewData) 
-        })
-        .then((res)=>{
-          if(res.status<200 || res.status>299){
-            res.json().then(err=>{alert(err.message)})
-            let newError = {
-              error: 'error while getting data'
+        if(userToken){
+
+          fetch(links.backendUrl + '/post-review',{
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'authorization': `Bearer ${userToken}`
+            },
+            body: JSON.stringify(reviewData) 
+          })
+          .then((res)=>{
+            if(res.status<200 || res.status>299){
+              res.json().then(err=>{alert(err.message)})
+              let newError = {
+                error: 'error while getting data'
+              }
+              throw newError;
             }
-            throw newError;
-          }
-          return res.json();
-        })
-        .then((result)=>{
-          alert(result.message);
-        })
+            return res.json();
+          })
+          .then((result)=>{
+            alert(result.message);
+          })
+        }
+        else{
+          navigate('/login')
+        }
       }
       // let emailTest = importantFormFunctions.checkEmail
     }

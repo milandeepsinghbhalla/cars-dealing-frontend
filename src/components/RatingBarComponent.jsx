@@ -49,7 +49,7 @@ const RatingBarComponent = ({percent, numberOfVotes, feild})=>{
                     verticalAlign: 'middle'
                 }} /><span style={{
                     fontWeight: 'light'
-                }}> {` ${numberOfVotes.toFixed(2)}k reviews`}  </span></Grid>
+                }}> {` ${numberOfVotes} reviews`}  </span></Grid>
             </Grid>
            
 
