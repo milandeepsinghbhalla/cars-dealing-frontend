@@ -26,7 +26,7 @@ const ReviewsCard = ({ review }) => {
     <>
       <Grid
         container
-        p={4}
+        p={3}
         mt={3}
         borderRadius={"25px"}
         sx={{
@@ -34,7 +34,7 @@ const ReviewsCard = ({ review }) => {
         }}
       >
         <Grid container xs={12}>
-          <Grid item xs={11} md={4}>
+          <Grid item xs={11} md={8}>
             {`${review.reviewdBy.firstName} ${review.reviewdBy.lastName}`}
             <span
               style={{
@@ -46,9 +46,27 @@ const ReviewsCard = ({ review }) => {
               {timeSinceInMonthsOrDays(review.createdAt)}
             </span>
           </Grid>
-          <Grid item textAlign={"end"} xs={11} md={4} ml={"auto"}>
+          <Grid item  sx={{
+             textAlign: {
+              md: 'right'
+            }
+          }} xs={11} md={4}>
             {/* <Typography component="legend">Read only</Typography> */}
-            <Grid container justifyContent={'end'}>
+            <Grid container sx={{
+              justifyContent: {
+                xs: 'start',
+                md: 'end'
+              },
+              marginTop:{
+                xs: 1,
+                md: 0
+              },
+              marginLeft: {
+                xs: 0,
+                md: 'auto'
+              }
+             
+            }}>
               <Grid item pr={1}>{review.rating.toFixed(1)}</Grid>
               <Grid item>
                 <Rating name="read-only" value={review.rating} readOnly />
@@ -56,7 +74,12 @@ const ReviewsCard = ({ review }) => {
             </Grid>
           </Grid>
         </Grid>
-        <Grid container pl={3}>
+        <Grid container mt={1} sx={{
+          paddingLeft: {
+            xs: 1,
+            md: 2
+          }
+        }}>
               <Typography variant="body1">"{review.reviewText}"</Typography>
         </Grid>
       </Grid>

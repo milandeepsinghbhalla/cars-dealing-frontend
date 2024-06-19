@@ -1,4 +1,4 @@
-import { Button, Grid, Rating, Typography } from "@mui/material";
+import { Button, Grid, Pagination, Rating, Typography } from "@mui/material";
 import myColors from "../assets/util/myColors";
 import { useEffect, useState } from "react";
 import RatingBarComponent from "./RatingBarComponent";
@@ -15,61 +15,57 @@ const ReviewsComponent = () => {
 
   const [theVoteData, setTheVoteData] = useState([]);
   const [reviews, setReviews] = useState([]);
-  const [totalVotes,setTotalVotes] = useState(null);
-  const [totalRating,setTotalRating] = useState(null);
+  const [totalVotes, setTotalVotes] = useState(null);
+  const [totalRating, setTotalRating] = useState(null);
+  const [count, setCount] = useState(0);
+  const [page, setPage] = useState(1);
 
-  const [filterOptions,setFilterOptions] = useState([
+  const [filterOptions, setFilterOptions] = useState([
     {
-      name: '1 star',
-      fn: ()=>{
+      name: "1 star",
+      fn: () => {
         // filter to show only 1 star reviews
-      }
+      },
     },
     {
-      name: '2 star',
-      fn: ()=>{
-
-      }
+      name: "2 star",
+      fn: () => {},
     },
     {
-      name: '3 star',
-      fn: ()=>{
-        
-      }
+      name: "3 star",
+      fn: () => {},
     },
     {
-      name: '4 star',
-      fn: ()=>{
-        
-      }
+      name: "4 star",
+      fn: () => {},
     },
     {
-      name: '5 star',
-      fn: ()=>{
-        
-      }
-    }
-  ])
+      name: "5 star",
+      fn: () => {},
+    },
+  ]);
   const params = useParams();
 
   const [openModal, setOpenModal] = useState(false);
   const handleOpenModal = () => setOpenModal(true);
   const handleCloseModal = () => setOpenModal(false);
 
-    // let totalRating
-    
+  // let totalRating
+
   const calculatePercentages = (data) => {
     const totalVotes = Object.values(data).reduce(
       (sum, count) => sum + count,
       0
     );
-    let powerMap = Object.keys(data).map((key)=>{
-      return data[key] * key
-    })
-    let totalPower = powerMap.reduce((acc,currentElement)=>{ return acc + currentElement},0)
-    let totalRatingPower =  (totalPower/totalVotes).toFixed(1)
+    let powerMap = Object.keys(data).map((key) => {
+      return data[key] * key;
+    });
+    let totalPower = powerMap.reduce((acc, currentElement) => {
+      return acc + currentElement;
+    }, 0);
+    let totalRatingPower = (totalPower / totalVotes).toFixed(1);
     setTotalRating(totalRatingPower);
-  
+
     setTotalVotes(totalVotes);
 
     const percentages = {};
@@ -87,34 +83,42 @@ const ReviewsComponent = () => {
     //   4: 11000, // 4 star votes
     //   5: 8000, // 5 star votes
     // };
-    fetch(links.backendUrl + '/get-reviewBarData',{
-      method: 'POST',
+    fetch(links.backendUrl + "/get-reviewBarData", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json'
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        carId: params.carId
-      })
+        carId: params.carId,
+      }),
     })
-    .then(resultStatus=>{
-      if(resultStatus.status<200 || resultStatus.status>299){
-          resultStatus.json()
-          .then(err=>{
-            console.log('err rating bar data:-',err);
+      .then((resultStatus) => {
+        if (resultStatus.status < 200 || resultStatus.status > 299) {
+          resultStatus.json().then((err) => {
+            console.log("err rating bar data:-", err);
             alert(err.message);
-          })
-      }
-      return resultStatus.json();
-    })
-    .then(result=>{
-      // setReviewsResult(result.allReviews);
-      const percentages = calculatePercentages(result.allReviews);
-      setRatingPercentages(percentages);
-      let myVoteData = Object.values(result.allReviews);
-      setTheVoteData(myVoteData);
-    })
+          });
+        }
+        return resultStatus.json();
+      })
+      .then((result) => {
+        // setReviewsResult(result.allReviews);
+        const percentages = calculatePercentages(result.allReviews);
+        setRatingPercentages(percentages);
+        let myVoteData = Object.values(result.allReviews);
+        setTheVoteData(myVoteData);
+      });
 
-    fetch(links.backendUrl + "/get-reviews")
+    fetch(links.backendUrl + "/get-reviews", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        carId: params.carId,
+        page,
+      }),
+    })
       .then((result) => {
         if (result.status < 200 || result.status > 299) {
           result.json().then((err) => {
@@ -127,6 +131,7 @@ const ReviewsComponent = () => {
       .then((reviewsResult) => {
         console.log("reviews result:-", reviewsResult);
         setReviews(reviewsResult.reviews);
+        setCount(reviewsResult.count);
       })
       .catch((err) => {
         console.log("last error:- ", err);
@@ -141,6 +146,40 @@ const ReviewsComponent = () => {
   // useEffect(()=>{
 
   // },[])
+
+  const handleChange = (event, value) => {
+    // make request to fetch data
+    setPage(value);
+    fetch(links.backendUrl + "/get-reviews", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        carId: params.carId,
+        page: value,
+      }),
+    })
+      .then((result) => {
+        if (result.status < 200 || result.status > 299) {
+          result.json().then((err) => {
+            console.log("err:- ", err);
+            alert(err.messaage);
+          });
+        }
+        return result.json();
+      })
+      .then((reviewsResult) => {
+        console.log("reviews result:-", reviewsResult);
+        setReviews(reviewsResult.reviews);
+        // setCount(count)
+      })
+      .catch((err) => {
+        console.log("last error:- ", err);
+      });
+
+    //
+  };
 
   return (
     <>
@@ -177,17 +216,22 @@ const ReviewsComponent = () => {
           <Typography variant={"h6"}>Reviews</Typography>
           <hr />
         </Grid>
-        <Grid mt={2} container>
-          <Grid item textAlign={"center"} xs={2}>
+        <Grid mt={2} container justifyContent={'center'}>
+          <Grid item textAlign={"center"} xs={10} md={2}>
             <Typography variant="h2" color={"primary"}>
               {totalRating}
             </Typography>
-            <Rating name="read-only" size="small" value={value} readOnly />
+            <Rating name="read-only" size="small" value={totalRating} precision={0.5} readOnly />
             <Typography variant="body2" textAlign={"center"}>
               {totalVotes} Reviews
             </Typography>
           </Grid>
-          <Grid item xs={10}>
+          <Grid item xs={10} sx={{
+            display: {
+              xs: 'none',
+              md: 'block'
+            }
+          }}>
             {Object.keys(ratingPercentages).map((feild, i) => {
               return (
                 <RatingBarComponent
@@ -212,20 +256,25 @@ const ReviewsComponent = () => {
                 openModal={openModal}
                 handleCloseModal={handleCloseModal}
               />
-             
             </Grid>
             <Grid item pl={2} mt={3}>
-              <DropdownMenu title={'Filters'} options={filterOptions} />
+              <DropdownMenu title={"Filters"} options={filterOptions} />
             </Grid>
           </Grid>
-          
         </Grid>
-        {reviews.length>0 && reviews.map((review) => {
-                return(
+        {reviews.length > 0 &&
+          reviews.map((review) => {
+            return <ReviewsCard review={review} />;
+          })}
 
-                  <ReviewsCard review={review} />
-                )
-              })}
+        <Grid container mt={3} justifyContent={"center"} xs={11} md={10}>
+          <Pagination
+            count={count}
+            page={page}
+            color="primary"
+            onChange={handleChange}
+          />
+        </Grid>
       </Grid>
     </>
   );
