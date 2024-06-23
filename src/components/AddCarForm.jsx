@@ -15,6 +15,8 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import links from "../assets/util/links";
 import MultipleImageAddingComponent from "./MultipleImageAddingComponent";
+import Swal from 'sweetalert2'
+
 // import { imageDb } from "../firebase";
 // import { ref } from "firebase/storage";
 
@@ -586,7 +588,13 @@ const AddCarForm = () => {
     
         // Basic image validation (optional)
         if (!imageFile.type.match("image/.*")) {
-          alert("Please select a valid image file (JPEG, PNG, etc.)");
+          // alert("Please select a valid image file (JPEG, PNG, etc.)");
+          Swal.fire({
+            title: 'error',
+            text: "Please select a valid image file (JPEG, PNG, etc.)",
+            icon: 'error',
+            // confirmButtonText: 'Cool'
+          })
           return;
         }
     
@@ -792,10 +800,25 @@ const AddCarForm = () => {
                     return res.json()
                   })
                   .then(res=>{
-                    if((finalCarFormData.get('oldOrNew') )== 'new' || (finalCarFormData.get('oldOrNew'))== 'New')
+                    if((finalCarFormData.get('oldOrNew') )== 'new' || (finalCarFormData.get('oldOrNew'))== 'New'){
+                      Swal.fire({
+                        title: 'success',
+                        text: "Car Added Successfully",
+                        icon: 'Success',
+                        // confirmButtonText: 'Cool'
+                      })
                       navigate('/new-cars');
-                    else 
+                    }
+                      
+                    else {
+                      Swal.fire({
+                        title: 'success',
+                        text: "Car Added Successfully",
+                        icon: 'Success',
+                        // confirmButtonText: 'Cool'
+                      })
                       navigate('/used-cars');
+                    }
                   })
                   .catch(err=>{
                     console.log('error:-',err);

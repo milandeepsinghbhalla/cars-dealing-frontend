@@ -24,6 +24,8 @@ import {
 import Footer from "./Footer";
 import { useSelector, useDispatch } from "react-redux";
 import { loginUser, logoutUser } from "../reduxStore/userDataSlice";
+import Swal from 'sweetalert2'
+
 const navLinks = [
   {
     linkName: "Home",
@@ -242,7 +244,13 @@ export default function Navbar() {
       let date = Date.now();
       console.log('expiry , date',userData.expiry,date)
       if (userData.expiry < date) {
-        alert("Your session is expired please login again to continue.");
+        // alert("Your session is expired please login again to continue.");
+        Swal.fire({
+          title: 'Warning',
+          text:"Your session is expired please login again to continue." ,
+          icon: 'warning',
+          // confirmButtonText: 'Cool'
+        })
         dispatch(logoutUser());
         localStorage.removeItem("userData");
         navigate("/login");

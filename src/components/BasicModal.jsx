@@ -7,6 +7,7 @@ import { Grid, Rating, TextField } from "@mui/material";
 import importantFormFunctions from "../assets/util/importantFormFunctions";
 import links from "../assets/util/links";
 import { useNavigate, useParams } from "react-router-dom";
+import Swal from 'sweetalert2'
 
 const style = {
   position: "absolute",
@@ -20,13 +21,14 @@ const style = {
   p: 4,
 };
 
-function BasicModal({ openModal, handleCloseModal }) {
+function BasicModal({ openModal, handleCloseModal, setReviews }) {
   const navigate = useNavigate()
   const params = useParams();
     // const [carRatingValue,setCarRatingValue] = React.useState(0);
+    let userToken = null
     if(localStorage.getItem('userData')){
 
-      const userToken = (JSON.parse(localStorage.getItem('userData'))).userToken ;
+       userToken = (JSON.parse(localStorage.getItem('userData'))).userToken ;
       console.log('userToken',userToken);
     }
     const [reviewFormData,setReviewFormData] = React.useState({
@@ -44,13 +46,31 @@ function BasicModal({ openModal, handleCloseModal }) {
     
     const handleReviewFormDataSubmit = ()=>{
       if(importantFormFunctions.checkRequired(reviewFormData.carRating.value)){
-        alert('Rating feild is required.');
+        // alert('Rating feild is required.');
+        Swal.fire({
+          title: 'error',
+          text: 'Rating feild is required.',
+          icon: 'error',
+          // confirmButtonText: 'Cool'
+        })
       }
       else if((importantFormFunctions.checkRequired(reviewFormData.carReviewText.value))){
-        alert('Please add a review to continue.');
+        // alert('Please add a review to continue.');
+        Swal.fire({
+          title: 'error',
+          text: 'Please add a review to continue.',
+          icon: 'error',
+          // confirmButtonText: 'Cool'
+        })
       }
       else if(!importantFormFunctions.checkReviewLength(reviewFormData.carReviewText.value)){
-        alert('review must be less than 500 words');
+        // alert('review must be less than 500 words');
+        Swal.fire({
+          title: 'error',
+          text: 'review must be less than 500 words',
+          icon: 'error',
+          // confirmButtonText: 'Cool'
+        })
       }
       else{
         // post Review
@@ -71,16 +91,34 @@ function BasicModal({ openModal, handleCloseModal }) {
           })
           .then((res)=>{
             if(res.status<200 || res.status>299){
-              res.json().then(err=>{alert(err.message)})
-              let newError = {
-                error: 'error while getting data'
-              }
-              throw newError;
+              res.json().then((err)=>{
+                
+                // alert(err.message)})
+                Swal.fire({
+                  title: 'error',
+                  text: err.message,
+                  icon: 'error',
+                  // confirmButtonText: 'Cool'
+                })
+                
+
+              })
             }
-            return res.json();
+              
+              return res.json();
+            
           })
           .then((result)=>{
-            alert(result.message);
+            
+            // alert(result.message);
+            Swal.fire({
+              title: 'Success',
+              text: result.message,
+              icon: 'succeess',
+              // confirmButtonText: 'Cool'
+            })
+            handleCloseModal();
+            window.location.reload(true)
           })
         }
         else{

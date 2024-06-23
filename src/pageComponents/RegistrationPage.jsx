@@ -1,9 +1,20 @@
-import { Button, Grid, TextField, Typography } from "@mui/material";
+import { Button, FormControl, Grid, IconButton, InputAdornment, InputLabel, OutlinedInput, TextField, Typography } from "@mui/material";
 import signUpImg from "../assets/images/signup-img.jpg"
 import { useState } from "react";
 import links from "../assets/util/links";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
+import Swal from 'sweetalert2'
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { useDispatch } from "react-redux";
+import { googleLogout, useGoogleLogin } from "@react-oauth/google";
+import GoogleIcon from "@mui/icons-material/Google";
+import { loginUser } from "../reduxStore/userDataSlice";
+
+
+
 const RegistrationPage = () => {
-    
+    const navigate = useNavigate();
     const [registerformdata,setRegisterFormData] = useState({
         firstName:'',
         lastName: '',
@@ -46,7 +57,13 @@ const RegistrationPage = () => {
 
         }
         if(error.err){
-            alert(error.message);
+            // alert(error.message);
+            Swal.fire({
+              title: 'error',
+              text: error.message,
+              icon: 'error',
+              // confirmButtonText: 'Cool'
+            })
         }
         if(!error.err){
             // send data to backend.
@@ -58,20 +75,103 @@ const RegistrationPage = () => {
               })
               .then(response =>{
                 if(response.status<200 || response.status>299){
-
-                    alert('error while signing up');
+                    response.json().then((err)=>{
+                      Swal.fire({
+                        title: 'error',
+                        text: err.message,
+                        icon: 'error',
+                        // confirmButtonText: 'Cool'
+                      })
+                      
+                    })
+                  // ('error while signing up');
                 }
                 return response.json();
+                
               } )
               .then(data => {
                 console.log(data);
+                Swal.fire({
+                  title: 'Success',
+                  text: 'Signed Up Successfully.',
+                  icon: 'success',
+                  // confirmButtonText: 'Cool'
+                })
+                navigate('/login')
               })
               .catch(error => {
                 console.error(error);
-                alert(error.message)
+                // alert(error.message)
               });
         }
     }
+
+    const [showPassword, setShowPassword] = useState(false);
+
+    const handleClickShowPassword = () => setShowPassword((show) => !show);
+  
+    const handleMouseDownPassword = (event) => {
+      event.preventDefault();
+    };
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+    const handleClickShowConfirmPassword = () => setShowConfirmPassword((show) => !show);
+  
+    const handleMouseDownConfirmPassword = (event) => {
+      event.preventDefault();
+    };
+    const loginWithGoogle = useGoogleLogin({
+      onSuccess: (codeResponse) => {
+        // setUser(codeResponse),
+        console.log("google user:-", codeResponse);
+        axios
+          .get(
+            `https://www.googleapis.com/oauth2/v1/userinfo?access_token=${codeResponse.access_token}`,
+            {
+              headers: {
+                Authorization: `Bearer ${codeResponse.access_token}`,
+                Accept: "application/json",
+              },
+            }
+          )
+          .then((res) => {
+            console.log("res data", res.data);
+            const userData = {
+              firstName: res.data.given_name.split(" ")[0],
+              lastName: res.data.family_name,
+              email: res.data.email,
+              role: "customer",
+            };
+            console.log("user data:-", userData);
+            axios
+              .post(links.backendUrl + "/sign-up-google", userData)
+              .then(function (response) {
+                console.log("google login response:-", response.data);
+                dispatch(loginUser({ userData: response.data.userData }));
+                const now = Date.now();
+                const expiry = now + 3600000;
+                response.data.userData.expiry = expiry;
+                localStorage.setItem(
+                  "userData",
+                  JSON.stringify(response.data.userData)
+                );
+                Swal.fire({
+                  title: "success",
+                  text: "Logged in succeessfully.",
+                  icon: "success",
+                  // confirmButtonText: 'Cool'
+                });
+                navigate("/", { replace: true });
+              })
+              .catch(function (error) {
+                console.error(error);
+              });
+          })
+          .catch((err) => console.log(err));
+      },
+      onError: (error) => console.log("Login Failed:", error),
+    });
+    const dispatch = useDispatch();
   return (
     <Grid container justifyContent={"center"}>
       <Grid item sx={{
@@ -146,7 +246,9 @@ const RegistrationPage = () => {
               />
             </Grid>
             <Grid container  mt={2} xs={12}>
-              <TextField
+            <FormControl fullWidth size="small" variant="outlined">
+            <InputLabel htmlFor="Password-basic">Password</InputLabel>
+              <OutlinedInput
                 fullWidth
                 size="small"
                 onChange={(e)=>{
@@ -157,31 +259,59 @@ const RegistrationPage = () => {
                     })
                     
                 }}
+                endAdornment={
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={handleClickShowPassword}
+                      onMouseDown={handleMouseDownPassword}
+                      edge="end"
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                }
                 value={registerformdata.password}
                 id="Password-basic"
                 label="Password"
-                type="password"
-                variant="outlined"
+                type={showPassword ? 'text' : 'password'}
+                // variant="outlined"
               />
+              </FormControl>
             </Grid>
             <Grid container  mt={2} xs={12}>
-              <TextField
+            <FormControl fullWidth size="small" variant="outlined">
+            <InputLabel htmlFor="Confirm-Password-basic">Confirm Password</InputLabel>
+              <OutlinedInput
                 fullWidth
                 size="small"
-                type="password"
                 onChange={(e)=>{
                     setRegisterFormData(oldData=>{
                         let newData = {...oldData}
-                        newData.confirmPassword = e.target.value
+                        newData.confirmPassword= e.target.value
                         return newData;
                     })
                     
                 }}
+                endAdornment={
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={handleClickShowConfirmPassword}
+                      onMouseDown={handleMouseDownConfirmPassword}
+                      edge="end"
+                    >
+                      {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                }
                 value={registerformdata.confirmPassword}
-                id="ConfirmPassword-basic"
+                id="Confirm-Password-basic"
                 label="Confirm Password"
-                variant="outlined"
+                type={showConfirmPassword ? 'text' : 'password'}
+                // variant="outlined"
               />
+              </FormControl>
             </Grid>
 
             <Grid container mt={3} ml={'auto'} mr={'auto'} textAlign={'center'} xs={10}>
@@ -189,6 +319,19 @@ const RegistrationPage = () => {
                 Register
               </Button>
             </Grid>
+            <Grid container mt={3} ml={'auto'} mr={'auto'} textAlign={'center'} xs={10}>
+
+            <Button
+                  mt={2}
+                  onClick={() => loginWithGoogle()}
+                  fullWidth
+                  startIcon={<GoogleIcon />}
+                  variant="outlined"
+                >
+                  Continue with Google
+                </Button>
+            </Grid>
+                
           </Grid>
         </form>
       </Grid>

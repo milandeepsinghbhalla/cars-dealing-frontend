@@ -7,6 +7,8 @@ import links from "../assets/util/links";
 import ReviewsCard from "./ReviewsCard";
 import { useParams } from "react-router-dom";
 import DropdownMenu from "./DropdownMenu";
+import Swal from 'sweetalert2'
+
 
 const ReviewsComponent = () => {
   const [value, setValue] = useState(4);
@@ -19,6 +21,10 @@ const ReviewsComponent = () => {
   const [totalRating, setTotalRating] = useState(null);
   const [count, setCount] = useState(0);
   const [page, setPage] = useState(1);
+  const [topReviewExist,setTopReviewExist] = useState(false);
+  const [topReview,setTopReview] = useState(null);
+
+
 
   const [filterOptions, setFilterOptions] = useState([
     {
@@ -47,7 +53,59 @@ const ReviewsComponent = () => {
   const params = useParams();
 
   const [openModal, setOpenModal] = useState(false);
-  const handleOpenModal = () => setOpenModal(true);
+  let userToken = null
+  if(localStorage.getItem('userData')){
+
+     userToken = (JSON.parse(localStorage.getItem('userData'))).userToken ;
+    console.log('userToken',userToken);
+  }
+  const handleOpenPostReview = ()=>{
+    if(!userToken){
+      // alert('You need to login before posting a review.')
+      Swal.fire({
+        title: 'error',
+        text: 'You need to login before posting a review.' ,
+        icon: 'error',
+        // confirmButtonText: 'Cool'
+      })
+
+    }
+    else{
+      fetch(links.backendUrl + '/check-topReview',{
+        method: 'POST',
+        headers: {
+          "Content-Type": "application/json",
+          'authorization': `Bearer ${userToken}`,
+        },
+        body: JSON.stringify({
+          carId: params.carId,
+        })
+      })
+      .then(res=>{
+        return res.json()
+      })
+      .then(checkResult=>{
+        if(checkResult.topReviewExist){
+          // alert('You have already posted a review.')
+          Swal.fire({
+            title: 'error',
+            text: 'You have already posted a review.' ,
+            icon: 'error',
+            // confirmButtonText: 'Cool'
+          })
+          
+        }
+        else{
+  
+          setOpenModal(true)
+        }
+      })
+     
+      console.log('top review exist in open:-',topReviewExist)
+      
+    }
+  }
+  // const handleOpenModal = () => ;
   const handleCloseModal = () => setOpenModal(false);
 
   // let totalRating
@@ -63,15 +121,28 @@ const ReviewsComponent = () => {
     let totalPower = powerMap.reduce((acc, currentElement) => {
       return acc + currentElement;
     }, 0);
-    let totalRatingPower = (totalPower / totalVotes).toFixed(1);
-    setTotalRating(totalRatingPower);
+    if(totalVotes !=0 ){
+
+      let totalRatingPower = (totalPower / totalVotes).toFixed(1);
+      setTotalRating(totalRatingPower);
+    }
+    else{
+      setTotalRating(0);
+    }
 
     setTotalVotes(totalVotes);
 
     const percentages = {};
+    if(totalVotes !=0){
 
-    for (const rating in data) {
-      percentages[rating] = (data[rating] / totalVotes) * 70;
+      for (const rating in data) {
+        percentages[rating] = (data[rating] / totalVotes) * 100;
+      }
+    }
+    else{
+      for (const rating in data) {
+        percentages[rating] = 0
+      }
     }
     return percentages;
   };
@@ -96,7 +167,13 @@ const ReviewsComponent = () => {
         if (resultStatus.status < 200 || resultStatus.status > 299) {
           resultStatus.json().then((err) => {
             console.log("err rating bar data:-", err);
-            alert(err.message);
+            // alert(err.message);
+            Swal.fire({
+              title: 'error',
+              text: err.message ,
+              icon: 'error',
+              // confirmButtonText: 'Cool'
+            })
           });
         }
         return resultStatus.json();
@@ -108,11 +185,45 @@ const ReviewsComponent = () => {
         let myVoteData = Object.values(result.allReviews);
         setTheVoteData(myVoteData);
       });
+      // if(userToken){
+
+      //   fetch(links.backendUrl + '/get-top-review',{
+          
+      //       method: 'POST',
+      //       headers: {
+      //         'authorization': `Bearer ${userToken}`,
+      //         "Content-Type": "application/json"
+      //         // Add other headers if needed (e.g., Content-Type)
+      //       },
+      //       // Optional: body containing the data to send
+      //       body: JSON.stringify({
+      //         carId: params.carId
+      //       }) // Assuming data is a JavaScript object
+          
+      //   })
+      //   .then((statusResult)=>{
+      //     if(statusResult.status<200 || statusResult.status>299){
+      //       console.log('some error while getting top review');
+      //     }
+      //   return statusResult.json()
+      //   })
+      //   .then((topReviewResult)=>{
+      //     console.log('top Review result',topReviewResult)
+      //     if(topReviewResult.topReviewExist){
+      //       setTopReviewExist(true);
+      //       topReview = topReviewResult.reviews
+      //     }
+      //     else{
+      //       setTopReviewExist(false);
+      //     }
+      //   })
+      // }
 
     fetch(links.backendUrl + "/get-reviews", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        'authorization': `Bearer ${userToken}`,
       },
       body: JSON.stringify({
         carId: params.carId,
@@ -124,12 +235,20 @@ const ReviewsComponent = () => {
           result.json().then((err) => {
             console.log("err:- ", err);
             alert(err.messaage);
+            Swal.fire({
+              title: 'error',
+              text: err.messaage ,
+              icon: 'error',
+              // confirmButtonText: 'Cool'
+            })
           });
         }
         return result.json();
       })
       .then((reviewsResult) => {
         console.log("reviews result:-", reviewsResult);
+        console.log('topReviewExist:-', reviewsResult.topReviewExist)
+        setTopReview(reviewsResult.topReviewExist);
         setReviews(reviewsResult.reviews);
         setCount(reviewsResult.count);
       })
@@ -164,7 +283,14 @@ const ReviewsComponent = () => {
         if (result.status < 200 || result.status > 299) {
           result.json().then((err) => {
             console.log("err:- ", err);
-            alert(err.messaage);
+            // alert(err.messaage);
+            Swal.fire({
+              title: 'error',
+              text: err.messaage ,
+              icon: 'error',
+              // confirmButtonText: 'Cool'
+            })
+            
           });
         }
         return result.json();
@@ -247,14 +373,16 @@ const ReviewsComponent = () => {
             <Grid item pl={2} mt={3}>
               <Button
                 color="primary"
-                onClick={handleOpenModal}
+                onClick={handleOpenPostReview}
                 variant="contained"
+                // disabled = {topReviewExist}
               >
                 Post Review
               </Button>
               <BasicModal
                 openModal={openModal}
                 handleCloseModal={handleCloseModal}
+                setReviews = {setReviews}
               />
             </Grid>
             <Grid item pl={2} mt={3}>
@@ -262,6 +390,9 @@ const ReviewsComponent = () => {
             </Grid>
           </Grid>
         </Grid>
+        {/* {topReviewExist && topReview.map((review)=>{
+          return <ReviewsCard review={review} />
+        })} */}
         {reviews.length > 0 &&
           reviews.map((review) => {
             return <ReviewsCard review={review} />;
