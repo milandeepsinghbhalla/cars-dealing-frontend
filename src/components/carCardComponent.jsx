@@ -8,6 +8,7 @@ import Typography from "@mui/material/Typography";
 import myColors from "../assets/util/myColors";
 import links from "../assets/util/links";
 import { Link } from "react-router-dom";
+import EnquireNowModal from "./EnquireNowModal";
 
 const CarCardComponent = (props) => {
   const buttonStyles = {
@@ -15,7 +16,7 @@ const CarCardComponent = (props) => {
     padding: "8px 16px" /* Adjust padding as needed */,
     border: "none",
     borderRadius: "50px" /* Creates the cylindrical shape */,
-    backgroundColor: "#F9F9F9",
+    backgroundColor: "#d3d3d3",
     color: myColors.textBlack /* Adjust text color as desired */,
     // cursor: pointer,
     transition:
@@ -27,11 +28,21 @@ const CarCardComponent = (props) => {
     whiteSpace: "nowrap",
     margin: "0.4rem",
   };
+  const [openEnquiryModal, setOpenEnquiryModal] = React.useState(false);
+  const handleOpenEnquiry = ()=>{
+    setOpenEnquiryModal(true);
+  }
+  const handleCloseEnquiry = ()=>{
+    setOpenEnquiryModal(false);
+  }
   return (
+    <>
+    
     <Card
       sx={{
         maxWidth: 345,
-        display: "flex",
+        minWidth: 280,
+        display: "inline-flex",
         justifyContent: "space-between",
         flexDirection: "column",
       }}
@@ -67,9 +78,12 @@ const CarCardComponent = (props) => {
             Learn More
           </Button>
         </Link>
-        <Button size="small">Enquire</Button>
+        <Button size="small" onClick={handleOpenEnquiry}>Enquire</Button>
       </CardActions>
     </Card>
+    <EnquireNowModal openModal={openEnquiryModal} handleCloseModal={handleCloseEnquiry} carId={props.car._id}  />
+
+    </>
   );
 };
 export default CarCardComponent;

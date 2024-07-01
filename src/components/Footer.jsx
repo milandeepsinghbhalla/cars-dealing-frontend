@@ -3,6 +3,7 @@ import myColors from "../assets/util/myColors";
 import { Label } from "@mui/icons-material";
 import { useState } from "react";
 import links from "../assets/util/links";
+import Swal from "sweetalert2";
 
 const Footer = () => {
   const inputStyles = {
@@ -67,7 +68,7 @@ const Footer = () => {
       });
   };
   const handleSubscribtion = () => {
-    let url = links.backendUrl + "/send-email";
+    let url = links.backendUrl + "/subscribe";
     fetch(url, {
       method: "POST",
       body: JSON.stringify({
@@ -78,7 +79,13 @@ const Footer = () => {
       .then((response) => response.json())
       .then((data) => {
         console.log(data);
-        alert(data.message);
+        Swal.fire({
+
+          title: 'Success',
+          text:data.message ,
+          icon: 'success',
+        }
+        )
         setSubscribeEmail("");
       })
       .catch((error) => {
@@ -112,6 +119,7 @@ const Footer = () => {
             style={inputStyles}
             placeholder="email"
             type="text"
+            // onClick={handleSubscribtion}
           ></input>
           <Grid ml={2}
               mt={2} container>

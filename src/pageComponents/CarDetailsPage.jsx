@@ -1,4 +1,4 @@
-import { Grid } from "@mui/material";
+import { Button, Grid } from "@mui/material";
 import { useEffect, useState } from "react";
 import carTestImage from "../assets/images/car-home-bg-3.jpeg";
 import { useParams } from "react-router-dom";
@@ -6,6 +6,7 @@ import links from "../assets/util/links";
 import CustomizedTable from "../components/CustomizedTable";
 import ScrollingImageComponent from "../components/ScrollingImageComponent";
 import ReviewsComponent from "../components/ReviewsComponent";
+import EnquireNowModal from "../components/EnquireNowModal";
 const CarDetailsPage = (props) => {
   // const [images, setImages] = useState([]);
   const imageStyles = {};
@@ -15,8 +16,15 @@ const CarDetailsPage = (props) => {
   // const [loadingData, setLoadingData] = useState(true);
   const [rows, setRows] = useState([]);
   const [currentImage, setCurrentImage] = useState(null);
+  const [openEnquiryModal, setOpenEnquiryModal] = useState(false);
   let carId = params.carId;
   // let myRows = [];
+  const handleOpenEnquiry = ()=>{
+    setOpenEnquiryModal(true);
+  }
+  const handleCloseEnquiry = ()=>{
+    setOpenEnquiryModal(false);
+  }
   useEffect(() => {
     // const asyncGetCarFn = async () => {
       try {
@@ -46,7 +54,8 @@ const CarDetailsPage = (props) => {
             {carType: finalcarInfoResult.car.carType},
             {color: finalcarInfoResult.car.color},
             {seatingCapacity: finalcarInfoResult.car.seatingCapacity},
-            {model: finalcarInfoResult.car.year}
+            {model: finalcarInfoResult.car.year},
+            {mileage: finalcarInfoResult.car.mileage}
           ]
           setRows(myRows);
           setCurrentImage(finalcarInfoResult.car.images[0])
@@ -114,6 +123,13 @@ const CarDetailsPage = (props) => {
       </Grid>
     }
     <ReviewsComponent />
+    <Button sx={{
+      position: 'fixed',
+      right: '40px',
+      bottom: '40px',
+      zIndex: 999
+    }} onClick={handleOpenEnquiry} size="large" variant="contained">Enquire Now</Button>
+      <EnquireNowModal openModal={openEnquiryModal} handleCloseModal={handleCloseEnquiry} carId={carId}  />
     </>
   );
 };

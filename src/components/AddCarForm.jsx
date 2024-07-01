@@ -200,7 +200,7 @@ const AddCarForm = () => {
   const finalCarFormData = new FormData();
   const adminEmail = useSelector((state)=>state.userDataSlice.email)
   console.log('adminEmail:- ',adminEmail);
-  finalCarFormData.append('email',adminEmail)
+  // finalCarFormData.append('email',adminEmail)
   const nextClickedHandler = (page) => {
     setOnForm(page);
   };
@@ -772,9 +772,12 @@ const AddCarForm = () => {
               <CustomButton
                 variant="contained"
                 onClick={() => {
-                  Object.keys(carFormData).forEach((key) => {
-                    finalCarFormData.append(key, carFormData[key]);
-                  });
+                  if (!finalCarFormData.get('brand')){
+
+                    Object.keys(carFormData).forEach((key) => {
+                      finalCarFormData.append(key, carFormData[key]);
+                    });
+                  }
                   console.log(finalCarFormData);
                   console.log(finalCarFormData.get('brand'))
                   console.log(finalCarFormData.get('carImg-0'))
@@ -785,10 +788,13 @@ const AddCarForm = () => {
                   // console.log('all images',finalCarFormData.get('carImages[]'));
 
                   // console.log('all images',)
-
+                  const userToken = (JSON.parse(localStorage.getItem('userData'))).userToken ;
                   fetch(links.backendUrl +  "/add-car", {
                     method: "POST",
                     body: finalCarFormData,
+                    headers: {
+                      'authorization': `Bearer ${userToken}`,
+                    }
 
                   })
                   .then(res=>{

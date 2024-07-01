@@ -25,6 +25,8 @@ import Footer from "./Footer";
 import { useSelector, useDispatch } from "react-redux";
 import { loginUser, logoutUser } from "../reduxStore/userDataSlice";
 import Swal from 'sweetalert2'
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
 
 const navLinks = [
   {
@@ -32,16 +34,7 @@ const navLinks = [
     link: "/",
     visibleTo: "All",
   },
-  {
-    linkName: "New Cars",
-    link: "/new-cars",
-    visibleTo: "All",
-  },
-  {
-    linkName: "Used Cars",
-    link: "/used-cars",
-    visibleTo: "All",
-  },
+  
   {
     linkName: "Profile",
     link: "/profile",
@@ -89,6 +82,8 @@ const MobileNavbarDrawer = (props) => {
   const role = useSelector((state) => state.userDataSlice.role);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  
   const logoutHandler = () => {
     dispatch(logoutUser());
     localStorage.removeItem("userData");
@@ -192,11 +187,22 @@ const MobileNavbarDrawer = (props) => {
                     }}
                     primary={navItem.linkName}
                   />
+                  
                 </ListItemButton>
               </Link>
             </ListItem>
           </>
         ))}
+        <ListItemButton>
+        <ListItemText
+                    sx={{
+                      color: myColors.textBlack,
+                    }}
+                    primary={'Cars'}
+                  />
+
+
+        </ListItemButton>
         {role == "admin" &&
           adminLinks.map((linkItem, index) => {
             return (
@@ -238,6 +244,14 @@ const MobileNavbarDrawer = (props) => {
 };
 export default function Navbar() {
   const dispatch = useDispatch();
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const openCars = Boolean(anchorEl);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
   React.useEffect(() => {
     if (localStorage.getItem("userData")) {
       let userData = JSON.parse(localStorage.getItem("userData"));
@@ -317,6 +331,27 @@ export default function Navbar() {
             </>
           );
         })}
+ <Button onClick={handleClick} sx={NavLinkStyles}>{'Cars'}</Button>
+<Menu
+        id="basic-menu"
+        anchorEl={anchorEl}
+        open={openCars}
+        onClose={handleClose}
+        MenuListProps={{
+          'aria-labelledby': 'basic-button',
+        }}
+      >
+       <Link color={myColors.textBlack} to={'/new-cars'}>
+       <MenuItem onClick={handleClose}>New Cars</MenuItem>
+       </Link>
+       <Link color={myColors.textBlack} to={'/used-cars'}>
+       <MenuItem onClick={handleClose}>Used Cars</MenuItem>
+       </Link>
+       <Link color={myColors.textBlack} to={'/rental-cars'}>
+       <MenuItem onClick={handleClose}>Rental Cars</MenuItem>
+       </Link>  
+        
+      </Menu>
         {role == "admin" &&
           adminLinks.map((linkObj) => {
             return (

@@ -25,7 +25,7 @@ const NewCars = () => {
       .then((carsData) => {
         console.log("cars:- ", carsData);
         setNewCars(carsData.cars);
-        setCount(carsData.count);
+        setCount(Math.ceil(count/6));
       });
   }, []);
   const handleChange = (event, value) => {
