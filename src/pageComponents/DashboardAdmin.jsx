@@ -4,8 +4,11 @@ import { Grid } from "@mui/material";
 import DashboardDrawer from "../components/DashboardDrawer.jsx";
 import AddCarForm from "../components/AddCarForm.jsx";
 import links from "../assets/util/links.js";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import AdminCheckDialog from "../components/AdminCheckDialog.jsx";
+import { endLoader, startLoader } from "../reduxStore/loadingSlice";
+import { useParams } from "react-router-dom";
+import ManageCars from "../components/ManageCars.jsx";
 const DashboardAdmin = ()=>{
 
     const [isAdmin,setIsAdmin] = useState(false)
@@ -19,9 +22,10 @@ const DashboardAdmin = ()=>{
       setOpen(false);
     };
   
-
+    const dispatch = useDispatch()
     const userToken = (JSON.parse(localStorage.getItem('userData'))).userToken ;
     console.log('userToken',userToken);
+    const { dashboardOption } = useParams();
     useEffect(()=>{
         // let tataPunch = Car(1,'Tata Punch','Micro-Suv',2021,34523,'Tata');
         // console.log('Tata punch:- ',tataPunch);
@@ -30,8 +34,19 @@ const DashboardAdmin = ()=>{
         // fetch(links.backendUrl + '/check-admin',{
 
         // })
-        let url = links.backendUrl + '/check-admin'
-        fetch(url, {
+        // const url = window.location.href;
+
+// Split the URL at the forward slash
+        // const urlParts = url.split("/");
+
+// Information after the last slash (/) is typically the filename or path
+        // const infoAfterSlash = urlParts[urlParts.length - 1];
+
+        // console.log(infoAfterSlash);
+        
+        let backUrl = links.backendUrl + '/check-admin'
+        dispatch(startLoader())
+        fetch(backUrl, {
             method: 'POST',
             headers: {
               'authorization': `Bearer ${userToken}`,
@@ -41,6 +56,7 @@ const DashboardAdmin = ()=>{
             // body: JSON.stringify(yourData) // Assuming data is a JavaScript object
           })
         .then((result)=>{
+            dispatch(endLoader())
             if(result.status<200 || result.status>299){
                 // let newError = {}
                 result.json().then(err=>{
@@ -49,6 +65,7 @@ const DashboardAdmin = ()=>{
                 })
             }
             return result.json()
+
          })
          .then((adminCheckResult)=>{
             if(adminCheckResult.isAdmin){
@@ -57,6 +74,7 @@ const DashboardAdmin = ()=>{
             else{
                 setIsAdmin(false)
             }
+            dispatch(endLoader())
          })
     },[])
 
@@ -67,7 +85,8 @@ const DashboardAdmin = ()=>{
         <Grid>
 
         <DashboardDrawer />
-        <AddCarForm />
+        { dashboardOption=='add-car-form' &&  <AddCarForm />}
+        { dashboardOption=='manage-cars' && <ManageCars />}
         </Grid>
             )
         }

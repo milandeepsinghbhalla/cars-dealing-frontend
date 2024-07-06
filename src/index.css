@@ -60,6 +60,42 @@ body::-webkit-scrollbar-thumb {
   /* border: 3px solid orange;  creates padding around scroll thumb */
 }
 
+/* HTML: <div class="loader"></div> */
+#myOverlay {
+  position: fixed; /* Sit on top of the page content */
+  /* display: none; Hidden by default */
+  width: 100%; /* Full width (cover the whole page) */
+  height: 100%; /* Full height (cover the whole page) */
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0,0,0,0.5); /* Black background with opacity */
+  z-index: 99999;
+}
+.loader {
+  position: absolute;
+  top: 40%;
+  left: 45%;
+  width: fit-content;
+  padding-bottom: 5px;
+  font-weight: bold;
+  font-family: monospace;
+  font-size: 30px;
+  overflow: hidden;
+  color: #ffffff;
+  text-shadow: 0 0 0 #ffffff,10ch 0 0 #ffffff;
+  background: linear-gradient(#ffffff 0 0) bottom left/0% 3px no-repeat;
+  animation: l14 1.5s infinite;
+}
+.loader:before {
+  content: "Loading...";
+}
+@keyframes l14 {
+    80%  {text-shadow:    0  0 0 #ffffff,10ch 0 0 #ffffff;background-size:100% 3px}
+    100% {text-shadow: -10ch 0 0 #ffffff,0    0 0 #ffffff}
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;

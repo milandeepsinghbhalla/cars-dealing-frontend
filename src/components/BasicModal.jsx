@@ -8,6 +8,8 @@ import importantFormFunctions from "../assets/util/importantFormFunctions";
 import links from "../assets/util/links";
 import { useNavigate, useParams } from "react-router-dom";
 import Swal from 'sweetalert2'
+import { useDispatch } from "react-redux";
+import { endLoader, startLoader } from "../reduxStore/loadingSlice";
 
 const style = {
   position: "absolute",
@@ -24,6 +26,7 @@ const style = {
 function BasicModal({ openModal, handleCloseModal, setReviews }) {
   const navigate = useNavigate()
   const params = useParams();
+  const dispatch = useDispatch();
     // const [carRatingValue,setCarRatingValue] = React.useState(0);
     let userToken = null
     if(localStorage.getItem('userData')){
@@ -80,7 +83,7 @@ function BasicModal({ openModal, handleCloseModal, setReviews }) {
           carId: params.carId
         }
         if(userToken){
-
+          dispatch(startLoader())
           fetch(links.backendUrl + '/post-review',{
             method: 'POST',
             headers: {
@@ -94,6 +97,7 @@ function BasicModal({ openModal, handleCloseModal, setReviews }) {
               res.json().then((err)=>{
                 
                 // alert(err.message)})
+                dispatch(endLoader())
                 Swal.fire({
                   title: 'error',
                   text: err.message,

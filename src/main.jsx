@@ -40,7 +40,7 @@ const router = createBrowserRouter([
         element: <HomePage />,
       },
       {
-        path: "/dashboard",
+        path: "/dashboard/:dashboardOption",
         element: <DashboardAdmin />,
       },
       {

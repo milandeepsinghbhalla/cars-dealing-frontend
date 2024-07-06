@@ -45,6 +45,9 @@ const CarCardComponent = (props) => {
         display: "inline-flex",
         justifyContent: "space-between",
         flexDirection: "column",
+        borderRadius: '32px',
+        background: '#e0e0e0',
+        boxShadow:  '24px 24px 26px #a8a8a8, -24px -24px 26px #ffffff'
       }}
     >
       <CardMedia

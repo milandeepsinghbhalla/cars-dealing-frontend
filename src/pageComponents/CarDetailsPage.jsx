@@ -7,6 +7,8 @@ import CustomizedTable from "../components/CustomizedTable";
 import ScrollingImageComponent from "../components/ScrollingImageComponent";
 import ReviewsComponent from "../components/ReviewsComponent";
 import EnquireNowModal from "../components/EnquireNowModal";
+import { useDispatch } from "react-redux";
+import { endLoader, startLoader } from "../reduxStore/loadingSlice";
 const CarDetailsPage = (props) => {
   // const [images, setImages] = useState([]);
   const imageStyles = {};
@@ -25,11 +27,12 @@ const CarDetailsPage = (props) => {
   const handleCloseEnquiry = ()=>{
     setOpenEnquiryModal(false);
   }
+  const dispatch = useDispatch()
   useEffect(() => {
     // const asyncGetCarFn = async () => {
       try {
        
-  
+        dispatch(startLoader())
         const carResult = fetch(links.backendUrl + "/get-car", {
           method: "POST",
           body: JSON.stringify({ carId: carId }),
@@ -59,10 +62,12 @@ const CarDetailsPage = (props) => {
           ]
           setRows(myRows);
           setCurrentImage(finalcarInfoResult.car.images[0])
+          dispatch(endLoader())
         })
         // setLoadingData(false);
       } catch (err) {
         console.log("err:-", err);
+        dispatch(endLoader())
       }
     
     

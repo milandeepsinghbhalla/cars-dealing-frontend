@@ -27,6 +27,7 @@ import { loginUser, logoutUser } from "../reduxStore/userDataSlice";
 import Swal from 'sweetalert2'
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
+import Loading from "./Loading";
 
 const navLinks = [
   {
@@ -50,7 +51,7 @@ const navLinks = [
 const adminLinks = [
   {
     linkName: "Dashboard",
-    link: "/Dashboard",
+    link: "/Dashboard/add-car-form",
     visibleTo: "Admin",
   },
 ];
@@ -259,13 +260,13 @@ export default function Navbar() {
       console.log('expiry , date',userData.expiry,date)
       if (userData.expiry < date) {
         // alert("Your session is expired please login again to continue.");
+        dispatch(logoutUser());
         Swal.fire({
           title: 'Warning',
           text:"Your session is expired please login again to continue." ,
           icon: 'warning',
           // confirmButtonText: 'Cool'
         })
-        dispatch(logoutUser());
         localStorage.removeItem("userData");
         navigate("/login");
       } else {
@@ -407,6 +408,7 @@ export default function Navbar() {
 
   return (
     <>
+    <Loading />
       <Box sx={{ flexGrow: 1 }}>
         <AppBar sx={appBarStyles} position="static">
           <Toolbar>

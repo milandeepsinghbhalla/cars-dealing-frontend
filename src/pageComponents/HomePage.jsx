@@ -5,6 +5,8 @@ import { Grid, Typography } from "@mui/material";
 import ScrollContainer from "../components/ScrollContainer";
 import { useEffect, useState } from "react";
 import links from "../assets/util/links";
+import { useDispatch } from "react-redux";
+import { endLoader, startLoader } from "../reduxStore/loadingSlice";
 // import { useEffect } from "react";
 // import useDeviceWidth from "../customHooks/useDeviceWidth";
 
@@ -16,8 +18,10 @@ const HomePage = ()=>{
     const [usedCars,setUsedCars] = useState([]);
 
     
+    const dispatch = useDispatch();
     useEffect(() => {
         let url = links.backendUrl + "/get-seven-new-cars";
+        dispatch(startLoader())
         fetch(url)
           .then((data) => {
             console.log("response", data);
@@ -38,6 +42,7 @@ const HomePage = ()=>{
             console.log("cars:- ", carsData);
             setUsedCars(carsData.cars);
             // setCount(carsData.count);
+            dispatch(endLoader())
           });
       }, []);
 

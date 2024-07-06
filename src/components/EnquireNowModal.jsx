@@ -8,6 +8,8 @@ import importantFormFunctions from "../assets/util/importantFormFunctions";
 import links from "../assets/util/links";
 import { useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
+import { useDispatch } from "react-redux";
+import { endLoader, startLoader } from "../reduxStore/loadingSlice";
 
 const style = {
   position: "absolute",
@@ -42,6 +44,7 @@ const EnquireNowModal = (props) => {
       hasError: false,
     },
   });
+  const dispatch = useDispatch()
 
   const handleReviewFormDataSubmit = () => {
     if (importantFormFunctions.checkRequired(EnquiryFormData.subject.value)) {
@@ -85,6 +88,7 @@ const EnquireNowModal = (props) => {
         carLink: window.location.href,
       };
       if (userToken) {
+        dispatch(startLoader());
         fetch(links.backendUrl + "/send-enquiry", {
           method: "POST",
           headers: {
@@ -97,6 +101,7 @@ const EnquireNowModal = (props) => {
             if (res.status < 200 || res.status > 299) {
               res.json().then((err) => {
                 // alert(err.message)})
+                dispatch(endLoader())
                 Swal.fire({
                   title: "error",
                   text: err.message,
@@ -110,6 +115,8 @@ const EnquireNowModal = (props) => {
           })
           .then((result) => {
             // alert(result.message);
+            dispatch(endLoader())
+
             Swal.fire({
               title: "Success",
               text: result.message,

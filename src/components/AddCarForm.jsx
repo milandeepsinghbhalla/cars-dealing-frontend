@@ -11,11 +11,12 @@ import CustomButton from "./CustomButton";
 import { useState } from "react";
 // import { Button, TextField, IconButton } from '@mui/material';
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import links from "../assets/util/links";
 import MultipleImageAddingComponent from "./MultipleImageAddingComponent";
 import Swal from 'sweetalert2'
+import { startLoader } from "../reduxStore/loadingSlice";
 
 // import { imageDb } from "../firebase";
 // import { ref } from "firebase/storage";
@@ -223,7 +224,7 @@ const AddCarForm = () => {
   };
 
   const [carFormData, setCarFormData] = useState(carFormDataInitital);
-
+  const dispatch = useDispatch()
   // const carFormDataReducer = (state, action) => {
   //   let oldState = {};
   //   switch (action.type) {
@@ -789,6 +790,7 @@ const AddCarForm = () => {
 
                   // console.log('all images',)
                   const userToken = (JSON.parse(localStorage.getItem('userData'))).userToken ;
+                  dispatch(startLoader())
                   fetch(links.backendUrl +  "/add-car", {
                     method: "POST",
                     body: finalCarFormData,
@@ -798,6 +800,7 @@ const AddCarForm = () => {
 
                   })
                   .then(res=>{
+                    dispatch(endLoader())
                     console.log('result :-',res);
                     if(res.status<200 || res.status>299){
                       let newError = 'some error'

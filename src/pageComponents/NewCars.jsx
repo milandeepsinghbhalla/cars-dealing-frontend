@@ -2,13 +2,18 @@ import { Grid, Pagination, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import links from "../assets/util/links";
 import CarCardComponent from "../components/carCardComponent";
+import { useDispatch } from "react-redux";
+import { startLoader } from "../reduxStore/loadingSlice";
 
 const NewCars = () => {
   const [newCars, setNewCars] = useState([]);
   const [page, setPage] = useState(1);
   const [count, setCount] = useState(0);
+  const dispatch = useDispatch();
+
   useEffect(() => {
     let url = links.backendUrl + "/get-new-cars";
+    dispatch(startLoader())
     fetch(url, {
       method: "POST",
       headers: {
@@ -25,7 +30,8 @@ const NewCars = () => {
       .then((carsData) => {
         console.log("cars:- ", carsData);
         setNewCars(carsData.cars);
-        setCount(Math.ceil(count/6));
+        setCount(Math.ceil(carsData.count/6));
+        dispatch(endLoader())
       });
   }, []);
   const handleChange = (event, value) => {

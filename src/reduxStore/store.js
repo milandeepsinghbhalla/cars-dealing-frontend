@@ -1,5 +1,6 @@
 import { configureStore, createSlice } from '@reduxjs/toolkit';
 import userDataReducer from "./userDataSlice"
+import loadingSlice from './loadingSlice';
 // const userDataSlice = createSlice({
 //   name: 'userData',
 //   initialState: { 
@@ -28,5 +29,6 @@ import userDataReducer from "./userDataSlice"
 export const store = configureStore({
   reducer: {
     userDataSlice: userDataReducer,
+    loadingSlice: loadingSlice
   },
 });

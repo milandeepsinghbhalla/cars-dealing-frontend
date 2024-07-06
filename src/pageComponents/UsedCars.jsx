@@ -2,14 +2,18 @@ import { Grid, Pagination, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import links from "../assets/util/links";
 import CarCardComponent from "../components/carCardComponent";
+import { endLoader, startLoader } from "../reduxStore/loadingSlice";
 
 const UsedCars = () => {
   const [usedCars, setUsedCars] = useState([]);
   const [page, setPage] = useState(1);
   const [count, setCount] = useState(0);
+  const dispatch = useDispatch();
+
   useEffect(() => {
     // let url = links.backendUrl + '/get-used-cars'
     let url = links.backendUrl + "/get-used-cars";
+    dispatch(startLoader())
     fetch(url, {
       method: "POST",
       headers: {
@@ -27,6 +31,7 @@ const UsedCars = () => {
         console.log("cars:- ", carsData);
         setUsedCars(carsData.cars);
         setCount(Math.ceil(carsData.count/6));
+        dispatch(endLoader())
       });
   }, []);
 
@@ -34,6 +39,7 @@ const UsedCars = () => {
     // make request to fetch data
     setPage(value);
     let url = links.backendUrl + "/get-used-cars";
+    dispatch(showLoader())
     fetch(url, {
       method: "POST",
       headers: {
@@ -50,6 +56,7 @@ const UsedCars = () => {
       .then((carsData) => {
         console.log("cars:- ", carsData);
         setUsedCars(carsData.cars);
+        dispatch(endLoader())
       });
   };
   return (

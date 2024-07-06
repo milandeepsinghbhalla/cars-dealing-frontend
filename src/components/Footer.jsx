@@ -4,6 +4,8 @@ import { Label } from "@mui/icons-material";
 import { useState } from "react";
 import links from "../assets/util/links";
 import Swal from "sweetalert2";
+import { useDispatch } from "react-redux";
+import { endLoader, startLoader } from "../reduxStore/loadingSlice";
 
 const Footer = () => {
   const inputStyles = {
@@ -45,9 +47,10 @@ const Footer = () => {
   });
 
   const [subscribeEmail, setSubscribeEmail] = useState("");
-
+  const dispatch = useDispatch()
   const handleContactUs = () => {
     let url = links.backendUrl + "/contact-us";
+    dispatch(startLoader())
     fetch(url, {
       method: "POST",
       body: JSON.stringify(contactUsData), // This is the data you want to send
@@ -56,6 +59,8 @@ const Footer = () => {
       .then((response) => response.json())
       .then((data) => {
         console.log(data);
+    dispatch(endLoader())
+
         alert(data.message);
         setContactUsData({
           name: "",
@@ -69,6 +74,7 @@ const Footer = () => {
   };
   const handleSubscribtion = () => {
     let url = links.backendUrl + "/subscribe";
+    dispatch(startLoader())
     fetch(url, {
       method: "POST",
       body: JSON.stringify({
@@ -79,6 +85,7 @@ const Footer = () => {
       .then((response) => response.json())
       .then((data) => {
         console.log(data);
+        dispatch(endLoader())
         Swal.fire({
 
           title: 'Success',
@@ -89,6 +96,7 @@ const Footer = () => {
         setSubscribeEmail("");
       })
       .catch((error) => {
+        dispatch(endLoader())
         console.error(error);
       });
   };

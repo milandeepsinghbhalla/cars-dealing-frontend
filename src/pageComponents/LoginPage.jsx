@@ -24,6 +24,7 @@ import Swal from "sweetalert2";
 import { googleLogout, useGoogleLogin } from "@react-oauth/google";
 import axios from "axios";
 import GoogleIcon from "@mui/icons-material/Google";
+import { endLoader, startLoader } from "../reduxStore/loadingSlice";
 
 
 // import { useAuth0 } from "@auth0/auth0-react";
@@ -67,6 +68,7 @@ const LoginPage = () => {
     }
     if (!error.err) {
       let url = links.backendUrl + "/login-customer";
+      dispatch(startLoader());
       fetch(url, {
         method: "POST",
         body: JSON.stringify(loginFormData), // This is the data you want to send
@@ -93,6 +95,8 @@ const LoginPage = () => {
         })
         .then((data) => {
           console.log("login Data:- ", data);
+          dispatch(endLoader())
+
           dispatch(loginUser({ userData: data.userData }));
           const now = Date.now();
           const expiry = now + 3600000;
@@ -108,6 +112,8 @@ const LoginPage = () => {
         })
         .catch((error) => {
           console.error("login error:- ", error);
+          dispatch(endLoader())
+
           // alert(error.message);
         });
     }

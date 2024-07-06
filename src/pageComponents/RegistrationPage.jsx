@@ -10,6 +10,7 @@ import { useDispatch } from "react-redux";
 import { googleLogout, useGoogleLogin } from "@react-oauth/google";
 import GoogleIcon from "@mui/icons-material/Google";
 import { loginUser } from "../reduxStore/userDataSlice";
+import { endLoader, startLoader } from "../reduxStore/loadingSlice";
 
 
 
@@ -68,6 +69,7 @@ const RegistrationPage = () => {
         if(!error.err){
             // send data to backend.
             let url = links.backendUrl + '/signup-customer'
+            dispatch(startLoader())
             fetch(url, {
                 method: 'POST',
                 body: JSON.stringify(registerformdata), // This is the data you want to send
@@ -97,6 +99,8 @@ const RegistrationPage = () => {
                   icon: 'success',
                   // confirmButtonText: 'Cool'
                 })
+            dispatch(endLoader)
+
                 navigate('/login')
               })
               .catch(error => {
@@ -124,6 +128,7 @@ const RegistrationPage = () => {
       onSuccess: (codeResponse) => {
         // setUser(codeResponse),
         console.log("google user:-", codeResponse);
+        dispatch(startLoader())
         axios
           .get(
             `https://www.googleapis.com/oauth2/v1/userinfo?access_token=${codeResponse.access_token}`,
@@ -155,6 +160,7 @@ const RegistrationPage = () => {
                   "userData",
                   JSON.stringify(response.data.userData)
                 );
+                dispatch(endLoader())
                 Swal.fire({
                   title: "success",
                   text: "Logged in succeessfully.",
@@ -164,6 +170,8 @@ const RegistrationPage = () => {
                 navigate("/", { replace: true });
               })
               .catch(function (error) {
+                dispatch(endLoader())
+
                 console.error(error);
               });
           })

@@ -8,6 +8,8 @@ import ReviewsCard from "./ReviewsCard";
 import { useParams } from "react-router-dom";
 import DropdownMenu from "./DropdownMenu";
 import Swal from 'sweetalert2'
+import { useDispatch } from "react-redux";
+import { endLoader, startLoader } from "../reduxStore/loadingSlice";
 
 
 const ReviewsComponent = () => {
@@ -51,6 +53,7 @@ const ReviewsComponent = () => {
     },
   ]);
   const params = useParams();
+  const dispatch = useDispatch()
 
   const [openModal, setOpenModal] = useState(false);
   let userToken = null
@@ -71,6 +74,7 @@ const ReviewsComponent = () => {
 
     }
     else{
+      dispatch(startLoader());
       fetch(links.backendUrl + '/check-topReview',{
         method: 'POST',
         headers: {
@@ -87,6 +91,7 @@ const ReviewsComponent = () => {
       .then(checkResult=>{
         if(checkResult.topReviewExist){
           // alert('You have already posted a review.')
+          dispatch(endLoader())
           Swal.fire({
             title: 'error',
             text: 'You have already posted a review.' ,
@@ -154,6 +159,7 @@ const ReviewsComponent = () => {
     //   4: 11000, // 4 star votes
     //   5: 8000, // 5 star votes
     // };
+    dispatch(startLoader())
     fetch(links.backendUrl + "/get-reviewBarData", {
       method: "POST",
       headers: {
@@ -167,6 +173,7 @@ const ReviewsComponent = () => {
         if (resultStatus.status < 200 || resultStatus.status > 299) {
           resultStatus.json().then((err) => {
             console.log("err rating bar data:-", err);
+            dispatch(endLoader())
             // alert(err.message);
             Swal.fire({
               title: 'error',
@@ -218,7 +225,7 @@ const ReviewsComponent = () => {
       //     }
       //   })
       // }
-
+    dispatch(startLoader())
     fetch(links.backendUrl + "/get-reviews", {
       method: "POST",
       headers: {
@@ -234,6 +241,7 @@ const ReviewsComponent = () => {
         if (result.status < 200 || result.status > 299) {
           result.json().then((err) => {
             console.log("err:- ", err);
+            dispatch(endLoader())
             alert(err.messaage);
             Swal.fire({
               title: 'error',
@@ -268,6 +276,7 @@ const ReviewsComponent = () => {
 
   const handleChange = (event, value) => {
     // make request to fetch data
+    dispatch(startLoader())
     setPage(value);
     fetch(links.backendUrl + "/get-reviews", {
       method: "POST",
@@ -284,6 +293,7 @@ const ReviewsComponent = () => {
           result.json().then((err) => {
             console.log("err:- ", err);
             // alert(err.messaage);
+            dispatch(endLoader())
             Swal.fire({
               title: 'error',
               text: err.messaage ,
@@ -301,6 +311,7 @@ const ReviewsComponent = () => {
         // setCount(count)
       })
       .catch((err) => {
+        dispatch(endLoader())
         console.log("last error:- ", err);
       });
 
@@ -400,7 +411,7 @@ const ReviewsComponent = () => {
 
         <Grid container mt={3} justifyContent={"center"} xs={11} md={10}>
           <Pagination
-            count={count}
+            count={Math.ceil((count/5))}
             page={page}
             color="primary"
             onChange={handleChange}
