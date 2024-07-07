@@ -16,6 +16,7 @@ import IconButton from "@mui/material/IconButton";
 import myColors from "../assets/util/myColors";
 import SettingsIcon from "@mui/icons-material/Settings";
 import { AppBar, Toolbar } from "@mui/material";
+import { Link } from "react-router-dom";
 
 // import MailIcon from '@mui/icons-material/Mail';
 
@@ -36,6 +37,8 @@ export default function DashboardDrawer() {
     backgroundColor: myColors.textBlack,
   };
 
+  const dashboardLinks = ['/add-car-form','/manage-cars','/add-user','/manage-users']
+
   const DrawerList = (
     <Box sx={{ width: 250 }} role="presentation" onClick={closeDrawer}>
       <div>
@@ -53,12 +56,18 @@ export default function DashboardDrawer() {
       <List>
         {["Add Car", "Manage Cars", "Add User", "Manage Users"].map((text, index) => (
           <ListItem key={text} disablePadding>
-            <ListItemButton>
+          
+          <Link  to={'/Dashboard' + dashboardLinks[index]}>
+            
+            <ListItemButton  sx={{
+                color: myColors.textBlack
+              }}>
               <ListItemIcon>
                 {index % 2 === 0 ? <AddCircleIcon /> : <EditRoundedIcon />}
               </ListItemIcon>
               <ListItemText primary={text} />
             </ListItemButton>
+            </Link>
           </ListItem>
         ))}
       </List>
@@ -66,12 +75,17 @@ export default function DashboardDrawer() {
       <List>
         {["Handle Enquiries"].map((text, index) => (
           <ListItem key={text} disablePadding>
-            <ListItemButton>
+            <Link  to={'/Dashboard/handle-enquiries'}>
+            
+            <ListItemButton  sx={{
+                color: myColors.textBlack
+              }}>
               {/* <ListItemIcon>
                 {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
               </ListItemIcon> */}
               <ListItemText primary={text} />
             </ListItemButton>
+            </Link>
           </ListItem>
         ))}
       </List>

@@ -11,6 +11,17 @@ const ManageCars = () => {
   const headCells = ["SrNo.", "Name", "New Or Old", "Added By", "Actions"];
   const [rows, setRows] = useState([]);
 
+  const deleteRow = (carId)=>{
+    let rowIndex = rows.findIndex(row=>{
+      return row.carId == carId
+    })
+    rows.splice(rowIndex,1);
+    setRows(rows)
+    setTotal((total)=>{
+      return total - 1;
+    })
+  }
+
   const dispatch = useDispatch();
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(null);
@@ -69,7 +80,7 @@ const ManageCars = () => {
       <Grid container justifyContent={"center"}>
         <Grid item mx={3} mt={5} mb={5} xs={10}>
           {rows.length > 0 && (
-            <ManagementTable rows={rows} headerCells={headCells} />
+            <ManagementTable rows={rows} deleteRow={deleteRow} headerCells={headCells} />
           )}
         </Grid>
         <Grid container justifyContent={'center'} pb={3}  xs={10}>

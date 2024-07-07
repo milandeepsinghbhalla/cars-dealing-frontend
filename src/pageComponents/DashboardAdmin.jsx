@@ -9,6 +9,7 @@ import AdminCheckDialog from "../components/AdminCheckDialog.jsx";
 import { endLoader, startLoader } from "../reduxStore/loadingSlice";
 import { useParams } from "react-router-dom";
 import ManageCars from "../components/ManageCars.jsx";
+import HandleEnquiries from "../components/HandleEnquiries.jsx";
 const DashboardAdmin = ()=>{
 
     const [isAdmin,setIsAdmin] = useState(false)
@@ -87,6 +88,8 @@ const DashboardAdmin = ()=>{
         <DashboardDrawer />
         { dashboardOption=='add-car-form' &&  <AddCarForm />}
         { dashboardOption=='manage-cars' && <ManageCars />}
+        { dashboardOption=='handle-enquiries' && <HandleEnquiries />}
+
         </Grid>
             )
         }

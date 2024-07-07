@@ -8,13 +8,47 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { Button } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
+// import EditIcon from '@mui/icons-material/Edit';
+import PreviewIcon from '@mui/icons-material/Preview';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import links from '../assets/util/links';
+import Swal from 'sweetalert2';
 
-const ManagementTable = ({headerCells, rows})=>{
+const ManagementTable = ({headerCells, rows, deleteRow})=>{
 
-  const editCarhandler = ()=>{
+  const navigate = useNavigate()
+
+  const viewCarhandler = (carId)=>{
     // open edit car modal
+    navigate('/car-details/'+ carId)
     
+  }
+
+  const carDeleteHandler = (carId)=>{
+    axios.post(links.backendUrl + '/delete-car',{
+      carId: carId
+    })
+    .then((response)=>{
+
+      if(response.status<200 || response.status>299){
+        Swal.fire({
+          title: "error",
+          text: response.data.message,
+          icon: "error",
+        })
+      }
+      else{
+        Swal.fire({
+          title: "Success",
+          text: response.data.message,
+          icon: 'success'
+        })
+        // window.location.reload();
+        deleteRow(carId)
+        
+      }
+    })
   }
     return (
         <TableContainer component={Paper}>
@@ -43,7 +77,11 @@ const ManagementTable = ({headerCells, rows})=>{
                 <TableCell >{row.name}</TableCell>
                 <TableCell>{row.oldOrNew}</TableCell>
                 <TableCell >{row.adminEmail.email}</TableCell>
-                <TableCell ><Button m={1} variant='contained' color='primary' startIcon={<EditIcon />} onClick={editCarhandler}>Edit</Button> <Button variant='contained' color='error' startIcon={<DeleteIcon />} m={1}>Delete</Button></TableCell>
+                <TableCell ><Button m={1} variant='contained' color='primary' startIcon={<PreviewIcon />} onClick={()=>{
+                    viewCarhandler(row.carId)
+                }}>View</Button> <Button variant='contained'  color='error' startIcon={<DeleteIcon />} onClick={()=>{
+                  carDeleteHandler(row.carId);
+                }} m={1}>Delete</Button></TableCell>
 
               </TableRow>
             ))}
