@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import links from "../assets/util/links";
 import CarCardComponent from "../components/carCardComponent";
 import { useDispatch } from "react-redux";
-import { startLoader } from "../reduxStore/loadingSlice";
+import { endLoader, startLoader } from "../reduxStore/loadingSlice";
 
 const NewCars = () => {
   const [newCars, setNewCars] = useState([]);
@@ -24,6 +24,7 @@ const NewCars = () => {
       }),
     })
       .then((data) => {
+        dispatch(endLoader())
         console.log("response", data);
         return data.json();
       })
@@ -31,7 +32,6 @@ const NewCars = () => {
         console.log("cars:- ", carsData);
         setNewCars(carsData.cars);
         setCount(Math.ceil(carsData.count/6));
-        dispatch(endLoader())
       });
   }, []);
   const handleChange = (event, value) => {

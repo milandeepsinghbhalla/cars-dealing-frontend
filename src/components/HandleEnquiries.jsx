@@ -43,32 +43,86 @@ const HandleEnquiries = () => {
   const dispatch = useDispatch();
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(null);
+  const [filterSet,setFilterSet] = useState('')
 
   const handleChange = (event, value) => {
     setPage(value);
-    dispatch(startLoader());
-    axios
-      .post(links.backendUrl + "/get-five-enquiries", {
-        page: value,
+    if(filterSet.length == 0){
+
+      dispatch(startLoader());
+      axios
+        .post(links.backendUrl + "/get-five-enquiries", {
+          page: value,
+        })
+        .then((response) => {
+          dispatch(endLoader());
+          console.log(response);
+          if (response.status < 200 || response.status > 299) {
+            Swal.fire({
+              title: "error",
+              text: response.messaage,
+              icon: "error",
+              // confirmButtonText: 'Cool'
+            });
+          }
+          console.log("response", response);
+          setRows(response.data.enquiries);
+          setTotal(response.data.total);
+        })
+        .catch((err) => {
+          console.log("error while getting 5 cars", err);
+        });
+    }
+    else if(searchText.length>0){
+      setFilterSet('');
+      dispatch(startLoader());
+      axios.post(links.backendUrl + '/search-enquiries',{
+        searchText,
+        page
       })
-      .then((response) => {
-        dispatch(endLoader());
-        console.log(response);
-        if (response.status < 200 || response.status > 299) {
+      .then(response=>{
+        dispatch(endLoader())
+        if(response.status<200 || response.status>299){
           Swal.fire({
-            title: "error",
-            text: response.messaage,
-            icon: "error",
-            // confirmButtonText: 'Cool'
-          });
+            title: 'Error',
+            text: response.data.messaage,
+            icon: 'error'
+          })
         }
-        console.log("response", response);
-        setRows(response.data.enquiries);
-        setTotal(response.data.total);
+        else{
+          setRows(response.data.searchResult);
+          setTotal(response.data.total);
+        }
       })
-      .catch((err) => {
-        console.log("error while getting 5 cars", err);
-      });
+      .catch(err=>{
+        console.log('err while searching enquiries',err)
+      })
+    } 
+    
+    else {
+      dispatch(startLoader())
+      axios.post(links.backendUrl + '/filter-enquiries',{
+        completed: filterSet =='Completed' ? true : false,
+        page: page
+      })
+      .then(response=>{
+        dispatch(endLoader())
+        if(response.status<200 || response.status>299){
+          Swal.fire({
+            title: 'Error',
+            text: response.data.messaage,
+            icon: 'error'
+          })
+        }
+        else{
+          setRows(response.data.filteredEnquiries);
+          setTotal(response.data.total);
+        }
+      })
+      .catch(err=>{
+        console.log('err while filtering enquiries',err)
+      })
+    }
   };
   useEffect(() => {
     dispatch(startLoader());
@@ -105,6 +159,64 @@ const HandleEnquiries = () => {
     setAnchorEl(null);
   };
 
+  const filterEnquiries = (filterStr)=>{
+    dispatch(startLoader())
+    setPage(1)
+    setFilterSet(filterStr)
+    axios.post(links.backendUrl + '/filter-enquiries',{
+      completed: filterStr=='Completed' ? true : false,
+      page: page
+    })
+    .then(response=>{
+      dispatch(endLoader())
+      if(response.status<200 || response.status>299){
+        Swal.fire({
+          title: 'Error',
+          text: response.data.messaage,
+          icon: 'error'
+        })
+      }
+      else{
+        setRows(response.data.filteredEnquiries);
+        setTotal(response.data.total);
+      }
+    })
+    .catch(err=>{
+      console.log('err while filtering enquiries',err)
+    })
+  }
+
+  const [searchText,setSearchText] = useState('')
+  const handleSearch = ()=>{
+    setPage(1);
+    setFilterSet('');
+    if(searchText.length> 0){
+
+      dispatch(startLoader());
+      axios.post(links.backendUrl + '/search-enquiries',{
+        searchText,
+        page
+      })
+      .then(response=>{
+        dispatch(endLoader())
+        if(response.status<200 || response.status>299){
+          Swal.fire({
+            title: 'Error',
+            text: response.data.messaage,
+            icon: 'error'
+          })
+        }
+        else{
+          setRows(response.data.searchResult);
+          setTotal(response.data.total);
+        }
+      })
+      .catch(err=>{
+        console.log('err while searching enquiries',err)
+      })
+      
+    }
+  } 
   return (
     <Grid container justifyContent={"center"}>
       <Grid container justifyContent={'space-between'} mt={5} xs={10}>
@@ -118,6 +230,17 @@ const HandleEnquiries = () => {
             variant="contained"
           >
             Filters
+          </Button>
+          <Button
+            onClick={()=>{
+            window.location.reload() 
+            }}            
+            variant="contained"
+            sx={{
+              marginLeft: '1.3em'
+            }}
+          >
+            Reset
           </Button>
 
           <Menu
@@ -161,6 +284,14 @@ const HandleEnquiries = () => {
             }}
             placeholder="Search"
             fullWidth
+            onChange={(e)=>setSearchText(e.target.value)}
+            value={searchText}
+            onKeyDown={(e)=>{
+              if(e.key == 'Enter'){
+                // console.log('search text',searchText)
+                handleSearch()
+              }
+            }}
           />
           {/* <FormHelperText id="outlined-weight-helper-text">Weight</FormHelperText> */}
         </FormControl>
