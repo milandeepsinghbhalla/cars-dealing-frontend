@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import links from "../assets/util/links";
 import CarCardComponent from "../components/carCardComponent";
 import { endLoader, startLoader } from "../reduxStore/loadingSlice";
+import { useDispatch } from "react-redux";
 
 const UsedCars = () => {
   const [usedCars, setUsedCars] = useState([]);

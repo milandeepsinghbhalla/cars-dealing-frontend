@@ -10,6 +10,8 @@ import { endLoader, startLoader } from "../reduxStore/loadingSlice";
 import { useParams } from "react-router-dom";
 import ManageCars from "../components/ManageCars.jsx";
 import HandleEnquiries from "../components/HandleEnquiries.jsx";
+import AddUser from "../components/AddUser.jsx";
+import ManageUsers from "../components/ManageUsers.jsx";
 const DashboardAdmin = ()=>{
 
     const [isAdmin,setIsAdmin] = useState(false)
@@ -89,6 +91,10 @@ const DashboardAdmin = ()=>{
         { dashboardOption=='add-car-form' &&  <AddCarForm />}
         { dashboardOption=='manage-cars' && <ManageCars />}
         { dashboardOption=='handle-enquiries' && <HandleEnquiries />}
+        { dashboardOption=='add-user' && <AddUser />}
+        { dashboardOption=='manage-users' && <ManageUsers />}
+
+
 
         </Grid>
             )

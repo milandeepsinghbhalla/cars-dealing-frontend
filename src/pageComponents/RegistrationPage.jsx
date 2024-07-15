@@ -231,7 +231,7 @@ const RegistrationPage = () => {
             value={registerformdata.lastName}
                 fullWidth
                 id="LasttName-basic"
-                label="Lastt Name"
+                label="Last Name"
                 variant="outlined"
               />
             </Grid>

@@ -47,38 +47,39 @@ const HandleEnquiries = () => {
 
   const handleChange = (event, value) => {
     setPage(value);
-    if(filterSet.length == 0){
+    // if(filterSet.length == 0){
 
+    //   dispatch(startLoader());
+    //   axios
+    //     .post(links.backendUrl + "/get-five-enquiries", {
+    //       page: value,
+    //     })
+    //     .then((response) => {
+    //       dispatch(endLoader());
+    //       console.log(response);
+    //       if (response.status < 200 || response.status > 299) {
+    //         Swal.fire({
+    //           title: "error",
+    //           text: response.messaage,
+    //           icon: "error",
+    //           // confirmButtonText: 'Cool'
+    //         });
+    //       }
+    //       console.log("response", response);
+    //       setRows(response.data.enquiries);
+    //       setTotal(response.data.total);
+    //     })
+    //     .catch((err) => {
+    //       console.log("error while getting 5 cars", err);
+    //     });
+    // }
+    if(searchText.length>0){
+      // setFilterSet('');
       dispatch(startLoader());
-      axios
-        .post(links.backendUrl + "/get-five-enquiries", {
-          page: value,
-        })
-        .then((response) => {
-          dispatch(endLoader());
-          console.log(response);
-          if (response.status < 200 || response.status > 299) {
-            Swal.fire({
-              title: "error",
-              text: response.messaage,
-              icon: "error",
-              // confirmButtonText: 'Cool'
-            });
-          }
-          console.log("response", response);
-          setRows(response.data.enquiries);
-          setTotal(response.data.total);
-        })
-        .catch((err) => {
-          console.log("error while getting 5 cars", err);
-        });
-    }
-    else if(searchText.length>0){
-      setFilterSet('');
-      dispatch(startLoader());
+      setEmailSearchText('');
       axios.post(links.backendUrl + '/search-enquiries',{
         searchText,
-        page
+        page: value
       })
       .then(response=>{
         dispatch(endLoader())
@@ -98,12 +99,43 @@ const HandleEnquiries = () => {
         console.log('err while searching enquiries',err)
       })
     } 
+
+    else if(emailSearchText.length>0){
+      setSearchText('');
+      dispatch(startLoader());
+      axios.post(links.backendUrl + '/search-enquiries-by-email',{
+        email: emailSearchText,
+        page
+      })
+      .then((response) => {
+        dispatch(endLoader());
+        if (response.status < 200 || response.status > 299) {
+          let newError = {
+            message: response.data.message,
+          };
+          throw newError;
+        } else {
+          setRows(response.data.searchResult);
+          setTotal(response.data.total);
+        }
+      })
+      .catch((err) => {
+        dispatch(endLoader());
+  
+        console.log("error while user search:- ", err);
+        Swal.fire({
+          title: "Error",
+          text: err.messaage,
+          icon: "error",
+        });
+      })
+    }
     
     else {
       dispatch(startLoader())
       axios.post(links.backendUrl + '/filter-enquiries',{
         completed: filterSet =='Completed' ? true : false,
-        page: page
+        page: value
       })
       .then(response=>{
         dispatch(endLoader())
@@ -159,34 +191,36 @@ const HandleEnquiries = () => {
     setAnchorEl(null);
   };
 
-  const filterEnquiries = (filterStr)=>{
-    dispatch(startLoader())
-    setPage(1)
-    setFilterSet(filterStr)
-    axios.post(links.backendUrl + '/filter-enquiries',{
-      completed: filterStr=='Completed' ? true : false,
-      page: page
-    })
-    .then(response=>{
-      dispatch(endLoader())
-      if(response.status<200 || response.status>299){
-        Swal.fire({
-          title: 'Error',
-          text: response.data.messaage,
-          icon: 'error'
-        })
-      }
-      else{
-        setRows(response.data.filteredEnquiries);
-        setTotal(response.data.total);
-      }
-    })
-    .catch(err=>{
-      console.log('err while filtering enquiries',err)
-    })
-  }
+  // const filterEnquiries = (filterStr)=>{
+  //   dispatch(startLoader())
+  //   setPage(1)
+  //   setFilterSet(filterStr)
+  //   axios.post(links.backendUrl + '/filter-enquiries',{
+  //     completed: filterStr=='Completed' ? true : false,
+  //     page: page
+  //   })
+  //   .then(response=>{
+  //     dispatch(endLoader())
+  //     if(response.status<200 || response.status>299){
+  //       Swal.fire({
+  //         title: 'Error',
+  //         text: response.data.messaage,
+  //         icon: 'error'
+  //       })
+  //     }
+  //     else{
+  //       setRows(response.data.filteredEnquiries);
+  //       setTotal(response.data.total);
+  //     }
+  //   })
+  //   .catch(err=>{
+  //     console.log('err while filtering enquiries',err)
+  //   })
+  // }
 
   const [searchText,setSearchText] = useState('')
+  const [emailSearchText, setEmailSearchText] = useState("");
+
   const handleSearch = ()=>{
     setPage(1);
     setFilterSet('');
@@ -217,11 +251,42 @@ const HandleEnquiries = () => {
       
     }
   } 
+  const handleEmailSearch = ()=>{
+    setPage(1);
+    setSearchText('');
+    dispatch(startLoader());
+    axios.post(links.backendUrl + '/search-enquiries-by-email',{
+      email: emailSearchText,
+      page
+    })
+    .then((response) => {
+      dispatch(endLoader());
+      if (response.status < 200 || response.status > 299) {
+        let newError = {
+          message: response.data.message,
+        };
+        throw newError;
+      } else {
+        setRows(response.data.searchResult);
+        setTotal(response.data.total);
+      }
+    })
+    .catch((err) => {
+      dispatch(endLoader());
+
+      console.log("error while user search:- ", err);
+      Swal.fire({
+        title: "Error",
+        text: err.messaage,
+        icon: "error",
+      });
+    }); 
+  }
   return (
     <Grid container justifyContent={"center"}>
       <Grid container justifyContent={'space-between'} mt={5} xs={10}>
-        <Grid item  xs={4} md={4}>
-          <Button
+        <Grid item  xs={10} md={3}>
+          {/* <Button
             id="basic-button"
             aria-controls={openFilterDropDown ? "basic-menu" : undefined}
             aria-haspopup="true"
@@ -230,7 +295,7 @@ const HandleEnquiries = () => {
             variant="contained"
           >
             Filters
-          </Button>
+          </Button> */}
           <Button
             onClick={()=>{
             window.location.reload() 
@@ -243,7 +308,7 @@ const HandleEnquiries = () => {
             Reset
           </Button>
 
-          <Menu
+          {/* <Menu
             id="basic-menu"
             anchorEl={anchorEl}
             open={openFilterDropDown}
@@ -268,10 +333,46 @@ const HandleEnquiries = () => {
             >
               Completed
             </MenuItem>
-            {/* <MenuItem onClick={handleClose}>Logout</MenuItem> */}
-          </Menu>
+            <MenuItem onClick={handleClose}>Logout</MenuItem>
+          </Menu> */}
         </Grid>
-        <Grid item xs={6} md={6}>
+        <Grid item xs={10} md={4}>
+        <FormControl
+                sx={{
+                  width: "100%",
+                }}
+                variant="outlined"
+              >
+                <OutlinedInput
+                  id="outlined-adornment-search-by-email"
+                  endAdornment={
+                    <InputAdornment position="end">
+                      <SearchIcon
+                        onClick={() => {
+                          handleSearch();
+                        }}
+                      />
+                    </InputAdornment>
+                  }
+                  aria-describedby="outlined-search-helper-text"
+                  inputProps={{
+                    "aria-label": "search",
+                  }}
+                  placeholder="Email Search"
+                  fullWidth
+                  onChange={(e) => setEmailSearchText(e.target.value)}
+                  value={emailSearchText}
+                  onKeyDown={(e) => {
+                    if (e.key == "Enter") {
+                      // console.log('search text',searchText)
+                      handleEmailSearch();
+                    }
+                  }}
+                />
+                {/* <FormHelperText id="outlined-weight-helper-text">Weight</FormHelperText> */}
+              </FormControl>
+        </Grid>
+        <Grid item xs={10} md={4}>
         <FormControl sx={{
           width: '100%'
         }}  variant="outlined">

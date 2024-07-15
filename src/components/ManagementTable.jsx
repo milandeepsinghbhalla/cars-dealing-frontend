@@ -76,7 +76,7 @@ const ManagementTable = ({headerCells, rows, deleteRow})=>{
                 <TableCell >{(i + 1)}</TableCell>
                 <TableCell >{row.name}</TableCell>
                 <TableCell>{row.oldOrNew}</TableCell>
-                <TableCell >{row.adminEmail.email}</TableCell>
+                <TableCell >{row.adminEmail ? row.adminEmail.email : row.adminId.email}</TableCell>
                 <TableCell ><Button m={1} variant='contained' color='primary' startIcon={<PreviewIcon />} onClick={()=>{
                     viewCarhandler(row.carId)
                 }}>View</Button> <Button variant='contained'  color='error' startIcon={<DeleteIcon />} onClick={()=>{

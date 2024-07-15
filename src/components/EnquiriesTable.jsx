@@ -10,13 +10,15 @@ import { Box, Button, Grid, Modal, Typography } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 // import EditIcon from '@mui/icons-material/Edit';
 import PreviewIcon from "@mui/icons-material/Preview";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import links from "../assets/util/links";
 import DoneIcon from '@mui/icons-material/Done';
 import Swal from "sweetalert2";
 import { useDispatch } from "react-redux";
 import { endLoader, startLoader } from "../reduxStore/loadingSlice";
+import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
+
 
 
 const style = {
@@ -186,7 +188,7 @@ const EnquiriesTable = ({ headerCells, rows, deleteRow, completeRow }) => {
                 //     marginLeft: '0.5rem'
                 //   }}
                 >
-                  Mark Completed
+                  Complete
                 </Button>
                 <Button
                   variant="contained"
@@ -201,6 +203,27 @@ const EnquiriesTable = ({ headerCells, rows, deleteRow, completeRow }) => {
                 >
                   Delete
                 </Button>
+                <Link
+            to='#'
+            onClick={(e) => {
+                window.location.href = 'mailto:'+ row.enquiredBy.email;
+                e.preventDefault();
+            }}>
+
+                  <Button
+                    sx={{
+                      marginLeft: '0.5rem'
+                    }}
+                    variant="contained"
+                    color="primary"
+                    startIcon={<NotificationsActiveIcon />}
+                    onClick={() => {
+                      // editUserhandler(row._id);
+                    }}
+                  >
+                    Notify
+                  </Button>
+            </Link>
               </TableCell>
             </TableRow>
           ))}
