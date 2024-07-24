@@ -1,6 +1,6 @@
 
 const links = {
-    backendUrl: 'http://localhost:7777'
+    backendUrl: 'https://cars-dealing-backend.onrender.com'
 }
 
 export default links;
