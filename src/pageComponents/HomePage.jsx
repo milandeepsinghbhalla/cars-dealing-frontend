@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import links from "../assets/util/links";
 import { useDispatch } from "react-redux";
 import { endLoader, startLoader } from "../reduxStore/loadingSlice";
+import SearchCarsComponent from "../components/SearchCarsComponent";
 // import { useEffect } from "react";
 // import useDeviceWidth from "../customHooks/useDeviceWidth";
 
@@ -53,14 +54,15 @@ const HomePage = ()=>{
             </header> */}
             <Grid container>
 
-            <section>
+            
                 {
                     width<=768?<JumbotronMobile />: <Jumbotron />
                 }
                 
-            </section>
-            <Grid container height={'100vh'}>
-
+            
+            
+            <Grid container my={5}>
+                <SearchCarsComponent />
             </Grid>
             <Grid container marginTop={3} marginLeft={'auto'} marginRight={'auto'}  xs={10} >
                 <Typography variant="h5">

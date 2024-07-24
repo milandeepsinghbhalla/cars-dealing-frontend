@@ -5,6 +5,7 @@ import {
   InputAdornment,
   OutlinedInput,
   Pagination,
+  Typography,
 } from "@mui/material";
 import UserManagementTable from "./UserManagementTable";
 import { useDispatch } from "react-redux";
@@ -181,6 +182,9 @@ const ManageUsers = () => {
     <>
       <Grid container justifyContent={"center"}>
         <Grid container mt={5} xs={10} justifyContent={"space-between"}>
+        <Grid item mb={4} xs={12}>
+          <Typography variant="h4">Manage Users</Typography>
+        </Grid>
           <Grid item xs={10} md={3}>
             <Button
               variant="contained"

@@ -5,7 +5,7 @@ import axios from "axios";
 import Swal from "sweetalert2";
 // import ManagementTable from "./ManagementTable";
 import links from "../assets/util/links";
-import { Button, FormControl, Grid, InputAdornment, Menu, MenuItem, OutlinedInput, Pagination } from "@mui/material";
+import { Button, FormControl, Grid, InputAdornment, Menu, MenuItem, OutlinedInput, Pagination, Typography } from "@mui/material";
 import EnquiriesTable from "./EnquiriesTable";
 import * as React from 'react';
 import SearchIcon from '@mui/icons-material/Search';
@@ -285,6 +285,9 @@ const HandleEnquiries = () => {
   return (
     <Grid container justifyContent={"center"}>
       <Grid container justifyContent={'space-between'} mt={5} xs={10}>
+      <Grid item mb={4} xs={12}>
+          <Typography variant="h4">Manage Enquiries</Typography>
+        </Grid>
         <Grid item  xs={10} md={3}>
           {/* <Button
             id="basic-button"

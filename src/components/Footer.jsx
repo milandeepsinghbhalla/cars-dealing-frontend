@@ -139,6 +139,16 @@ const Footer = () => {
               Subscribe
             </Button>
           </Grid>
+          <Grid container mt={3} ml={1} justifyContent={'center'}>
+            <Grid item xs={12}>
+              <Typography variant="h6">
+                Xyz Street, Mnl City
+              </Typography>
+              <Typography variant="h6">
+                Abc State, 110034
+              </Typography>
+            </Grid>
+          </Grid>
         </Grid>
         <Grid item  mb={3.2} xs={10} md={6}>
           <Typography  mb={1} color={myColors.offWhite} variant="h6">

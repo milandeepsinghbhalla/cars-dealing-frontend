@@ -66,9 +66,9 @@ const UsedCars = () => {
 
       <Grid container mt={3} mb={3} justifyContent={"center"}>
         <Grid item xs={8}>
-          <Typography variant="h5">Used Cars</Typography>
+          <Typography variant="h5" mb={2}>Used Cars</Typography>
         </Grid>
-        <Grid container justifyContent={"center"} xs={12} spacing={1} md={8}>
+        <Grid container justifyContent={"center"} xs={12} spacing={2} md={9}>
           {usedCars.map((newCar) => {
             return (
               <Grid item xs={11} md={4}>

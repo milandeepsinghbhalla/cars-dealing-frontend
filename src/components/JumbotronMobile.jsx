@@ -26,6 +26,9 @@ const JumbotronMobile = () => {
           </Typography>
         </Grid>
       </Grid>
+      <Grid container height={'75vh'}>
+
+            </Grid>
     </>
   );
 };

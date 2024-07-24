@@ -35,6 +35,7 @@ const style = {
 const EnquiriesTable = ({ headerCells, rows, deleteRow, completeRow }) => {
   const navigate = useNavigate();
     const dispatch = useDispatch()
+    const [currentRow,setCurrentRow] = React.useState({})
   const viewCarhandler = (carId) => {
     // open edit car modal
     navigate("/car-details/" + carId);
@@ -99,7 +100,17 @@ const EnquiriesTable = ({ headerCells, rows, deleteRow, completeRow }) => {
           }
      })
   }
+
+  const openDeleteModalHandler = ()=>{
+    setOpenDeleteModal(true)
+  }
+  const handleCloseDeleteModal = ()=>{
+    setOpenDeleteModal(false)
+  }
+  const [openDeleteModal,setOpenDeleteModal] = React.useState(false)
+  const [currentDeleteId,setCurrentDeleteId] = React.useState('')
   return (
+    <>
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
         <TableHead>
@@ -143,33 +154,13 @@ const EnquiriesTable = ({ headerCells, rows, deleteRow, completeRow }) => {
                   color="primary"
                   startIcon={<PreviewIcon />}
                   onClick={() => {
+                    setCurrentRow(row)
                     openEnquiryModalHandler()
                   }}
                 >
                   View
                 </Button>
-                <Modal
-                  open={openEnquiryModal}
-                  onClose={handleCloseEnquiryModal}
-                  aria-labelledby="modal-modal-title"
-                  aria-describedby="modal-modal-description"
-                >
-                  <Box sx={style}>
-                    <Grid container>
-                        <Grid item xs={12}>
-                            <Typography variant="h4">
-                                {row.enquirySubject}
-                            </Typography>
-
-                        </Grid>
-                        <Grid item xs={12}>
-                            <Typography variant="body1">
-                                {row.enquiryText}
-                            </Typography>
-                        </Grid>
-                    </Grid>
-                  </Box>
-                </Modal>
+                
 
                 
               </TableCell>
@@ -195,7 +186,8 @@ const EnquiriesTable = ({ headerCells, rows, deleteRow, completeRow }) => {
                   color="error"
                   startIcon={<DeleteIcon />}
                   onClick={() => {
-                    enquiryDeleteHandler(row._id);
+                    setCurrentDeleteId(row._id)
+                    openDeleteModalHandler();
                   }}
                   sx={{
                     marginLeft: '0.5rem'
@@ -230,6 +222,64 @@ const EnquiriesTable = ({ headerCells, rows, deleteRow, completeRow }) => {
         </TableBody>
       </Table>
     </TableContainer>
+    <Modal
+    open={openEnquiryModal}
+    onClose={handleCloseEnquiryModal}
+    aria-labelledby="modal-modal-title"
+    aria-describedby="modal-modal-description"
+  >
+    <Box sx={style}>
+      <Grid container>
+          <Grid item xs={12}>
+              <Typography variant="h4">
+                  {currentRow.enquirySubject}
+              </Typography>
+
+          </Grid>
+          <Grid item xs={12}>
+              <Typography variant="body1">
+                  {currentRow.enquiryText}
+              </Typography>
+          </Grid>
+      </Grid>
+    </Box>
+  </Modal>
+  <Modal
+                  open={openDeleteModal}
+                  onClose={handleCloseDeleteModal}
+                  aria-labelledby="modal-modal-title"
+                  aria-describedby="modal-modal-description"
+                >
+                  <Box sx={style}>
+                    <Grid container xs={12}>
+                      <Grid item xs={12}>
+
+                      <Typography textAlign={'center'} variant="h5">
+                        Are you Sure you want to Delete this user ?
+                      </Typography>
+                      </Grid>
+                      <Grid container justifyContent={'space-between'}>
+                        <Grid item xs={5}>
+
+                        <Button onClick={handleCloseDeleteModal} variant="contained" color="warning">
+                          Cancel
+                        </Button>
+                        </Grid>
+                        <Grid textAlign={'end'} item xs={5}>
+
+                        <Button onClick={()=>{
+                          enquiryDeleteHandler(currentDeleteId);
+                          handleCloseDeleteModal()
+                        }}variant="contained" color="error">
+                          Delete
+                        </Button>
+                        </Grid>
+
+                      </Grid>
+                    </Grid>
+                  </Box>
+      </Modal>
+  </>
   );
 };
 

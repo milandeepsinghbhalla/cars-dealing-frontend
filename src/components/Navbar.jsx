@@ -37,8 +37,8 @@ const navLinks = [
   },
   
   {
-    linkName: "Profile",
-    link: "/profile",
+    linkName: "Your Enquiries",
+    link: "/your-enquiries",
     visibleTo: "All",
   },
   {
@@ -91,6 +91,7 @@ const MobileNavbarDrawer = (props) => {
     navigate("/login", { replace: true });
   };
 
+ 
   const loginMobileLink = (
     <>
       <ListItem disablePadding>
@@ -145,9 +146,17 @@ const MobileNavbarDrawer = (props) => {
       </ListItem>
     </>
   );
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const openCars = Boolean(anchorEl);
 
   return (
-    <Box sx={{ width: 250 }} role="presentation" onClick={props.closeDrawer}>
+    <Box sx={{ width: 250 }} role="presentation" >
       <div>
         <IconButton
           size="large"
@@ -178,7 +187,7 @@ const MobileNavbarDrawer = (props) => {
           <>
             <ListItem key={index} disablePadding>
               <Link color={myColors.textBlack} to={navItem.link}>
-                <ListItemButton>
+                <ListItemButton onClick={props.closeDrawer}>
                   {/* <ListItemIcon>
                 {index % 2 === 0 ? <AddCircleIcon /> : <EditRoundedIcon />}
               </ListItemIcon> */}
@@ -194,7 +203,7 @@ const MobileNavbarDrawer = (props) => {
             </ListItem>
           </>
         ))}
-        <ListItemButton>
+        <ListItemButton onClick={handleClick}>
         <ListItemText
                     sx={{
                       color: myColors.textBlack,
@@ -204,6 +213,32 @@ const MobileNavbarDrawer = (props) => {
 
 
         </ListItemButton>
+        <Menu
+        id="basic-menu"
+        anchorEl={anchorEl}
+        open={openCars}
+        onClose={props.closeDrawer}
+        MenuListProps={{
+          'aria-labelledby': 'basic-button',
+        }}
+      >
+       <Link to={'/new-cars'}>
+       <MenuItem  sx={{
+         color:myColors.textBlack
+       }} onClick={props.closeDrawer}>New Cars</MenuItem>
+       </Link>
+       <Link  to={'/used-cars'}>
+       <MenuItem  sx={{
+         color:myColors.textBlack
+       }} onClick={props.closeDrawer}>Used Cars</MenuItem>
+       </Link>
+       <Link  to={'/rental-cars'}>
+       <MenuItem  sx={{
+         color:myColors.textBlack
+       }} onClick={props.closeDrawer}>Rental Cars</MenuItem>
+       </Link>  
+        
+      </Menu>
         {role == "admin" &&
           adminLinks.map((linkItem, index) => {
             return (

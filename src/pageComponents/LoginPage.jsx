@@ -99,7 +99,7 @@ const LoginPage = () => {
 
           dispatch(loginUser({ userData: data.userData }));
           const now = Date.now();
-          const expiry = now + 3600000;
+          const expiry = now + 36000000;
           data.userData.expiry = expiry;
           localStorage.setItem("userData", JSON.stringify(data.userData));
           Swal.fire({

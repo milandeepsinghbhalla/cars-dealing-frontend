@@ -5,7 +5,7 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import ManagementTable from "./ManagementTable";
 import links from "../assets/util/links";
-import { Button, FormControl, Grid, InputAdornment, OutlinedInput, Pagination } from "@mui/material";
+import { Button, FormControl, Grid, InputAdornment, OutlinedInput, Pagination, Typography } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 
 const ManageCars = () => {
@@ -143,6 +143,9 @@ const ManageCars = () => {
     <>
       <Grid container justifyContent={"center"}>
         <Grid container xs={10} mt={5} justifyContent={"space-between"}>
+        <Grid item mb={4} xs={12}>
+          <Typography variant="h4">Manage Cars</Typography>
+        </Grid>
           <Grid xs={10} md={5}>
             <Button
               variant="contained"

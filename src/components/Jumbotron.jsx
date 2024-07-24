@@ -1,14 +1,26 @@
-import { Grid, Typography } from "@mui/material";
+import {
+  FormControl,
+  Grid,
+  InputAdornment,
+  OutlinedInput,
+  Pagination,
+  Typography,
+} from "@mui/material";
 import jumbotronImg from "../assets/images/car-home-bg-3.jpeg";
+import { useState } from "react";
+import axios from "axios";
+import CarCardComponent from "./carCardComponent";
+import SearchIcon from "@mui/icons-material/Search";
+
 const Jumbotron = () => {
   // const jumbotronContainerStyles = {
   //     backgroun
   // }
+
   return (
     <>
-    
-
-      <Grid container
+      <Grid
+        container
         sx={{
           backgroundImage: `url(${jumbotronImg})`,
           backgroundPosition: "center",
@@ -36,7 +48,8 @@ const Jumbotron = () => {
           </Typography>
         </section>
       </Grid>
-    
+
+      <Grid container height={"100vh"}></Grid>
     </>
   );
 };

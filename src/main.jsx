@@ -25,6 +25,8 @@ import UsedCars from "./pageComponents/UsedCars.jsx";
 import CarDetailsPage from "./pageComponents/CarDetailsPage.jsx";
 // import { Auth0Provider } from "@auth0/auth0-react";
 import { GoogleOAuthProvider } from "@react-oauth/google"
+import YourEnquiries from "./pageComponents/YourEnquiries.jsx";
+import OurStory from "./pageComponents/OurStory.jsx";
 
 // const db = getDatabase(app);
 
@@ -63,6 +65,14 @@ const router = createBrowserRouter([
         path: "/car-details/:carId",
         element: <CarDetailsPage />,
       },
+      {
+        path: "/your-enquiries",
+        element: <YourEnquiries />,
+      },
+      {
+        path: "/our-story",
+        element: <OurStory />
+      }
     ],
   },
 ]);
